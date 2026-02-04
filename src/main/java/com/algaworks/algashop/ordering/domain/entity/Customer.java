@@ -1,10 +1,17 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter(onMethod_ = {@Accessors(fluent = true)})
+@Setter(AccessLevel.PRIVATE)
 public class Customer {
 
     private UUID id;
@@ -82,46 +89,6 @@ public class Customer {
 
     private void setId(UUID id) {
         this.id = id;
-    }
-
-    private void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    private void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    private void setEmail(String email) {
-        this.email = email;
-    }
-
-    private void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    private void setDocument(String document) {
-        this.document = document;
-    }
-
-    private void setPromotionNotificationsAllowed(Boolean promotionNotificationsAllowed) {
-        this.promotionNotificationsAllowed = promotionNotificationsAllowed;
-    }
-
-    private void setArchived(Boolean archived) {
-        this.archived = archived;
-    }
-
-    private void setRegisteredAt(OffsetDateTime registeredAt) {
-        this.registeredAt = registeredAt;
-    }
-
-    private void setArchivedAt(OffsetDateTime archivedAt) {
-        this.archivedAt = archivedAt;
-    }
-
-    private void setLoyaltyPoints(Integer loyaltyPoints) {
-        this.loyaltyPoints = loyaltyPoints;
     }
 
     @Override
