@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Ordering" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.algaworks.algashop.ordering.OrderingApplication" />
+    <module name="ordering.main" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/microservices/ordering" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
