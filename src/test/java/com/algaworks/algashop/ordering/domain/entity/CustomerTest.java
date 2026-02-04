@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 import static com.algaworks.algashop.ordering.domain.excpetion.ErrorMessages.VALIDATION_ERROR_EMAIL_IS_INVALID;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 class CustomerTest {
 
@@ -46,6 +46,31 @@ class CustomerTest {
                 .withMessage(VALIDATION_ERROR_EMAIL_IS_INVALID);
 
 
+    }
+
+    @Test
+    void givenUnarchivedCustomer_whenArchive_shouldAnonymize() {
+        Customer customer = new Customer(
+                IdGenerator.generateTimeBasedUUID(),
+                "John Doe",
+                LocalDate.of(1991, 7, 25),
+                "joh.doe@gmail.com",
+                "1234567890",
+                "123.456.789-00",
+                true,
+                OffsetDateTime.now()
+        );
+
+        customer.archive();
+
+        assertWith(customer,
+                c -> assertThat(c.fullName()).isEqualTo("Anonymous"),
+                c -> assertThat(c.email()).isNotEqualTo("john.doe@gmail.com"),
+                c -> assertThat(c.phone()).isEqualTo("000-000-0000"),
+                c -> assertThat(c.document()).isEqualTo("000-000-0000"),
+                c -> assertThat(c.isArchived()).isTrue(),
+                c -> assertThat(c.birthDate()).isNull()
+        );
     }
 
 }

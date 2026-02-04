@@ -64,6 +64,12 @@ public class Customer {
     public void archive() {
         this.setArchived(true);
         this.setArchivedAt(OffsetDateTime.now());
+        this.setFullName("Anonymous");
+        this.setPhone("000-000-0000");
+        this.setDocument("000-000-0000");
+        this.setBirthDate(null);
+        this.setEmail(String.format("%s@anonymous.com", UUID.randomUUID()));
+
     }
 
     public void enablePromotionNotifications() {
@@ -144,7 +150,10 @@ public class Customer {
     }
 
     private void setBirthDate(LocalDate birthDate) {
-        Objects.requireNonNull(birthDate, VALIDATION_ERROR_BIRTHDATE_IS_NULL);
+        if (birthDate == null) {
+            this.birthDate = null;
+            return;
+        }
         if (birthDate.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException(VALIDATION_ERROR_BIRTHDATE_MUST_IN_PAST);
         }
