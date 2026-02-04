@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
+import com.algaworks.algashop.ordering.domain.excpetion.CustomerArchivedException;
 import com.algaworks.algashop.ordering.domain.validator.FieldValidator;
 
 import java.time.LocalDate;
@@ -55,6 +56,7 @@ public class Customer {
     }
 
     public void addLoyaltyPoints(Integer points) {
+        verifyIfChangeable();
         if (this.loyaltyPoints == null) {
             this.loyaltyPoints = 0;
         }
@@ -62,6 +64,7 @@ public class Customer {
     }
 
     public void archive() {
+        verifyIfChangeable();
         this.setArchived(true);
         this.setArchivedAt(OffsetDateTime.now());
         this.setFullName("Anonymous");
@@ -69,26 +72,32 @@ public class Customer {
         this.setDocument("000-000-0000");
         this.setBirthDate(null);
         this.setEmail(String.format("%s@anonymous.com", UUID.randomUUID()));
+        this.promotionNotificationsAllowed = false;
 
     }
 
     public void enablePromotionNotifications() {
+        verifyIfChangeable();
         this.setPromotionNotificationsAllowed(true);
     }
 
     public void disablePromotionNotifications() {
+        verifyIfChangeable();
         this.setPromotionNotificationsAllowed(false);
     }
 
     public void changeName(String fullName) {
+        verifyIfChangeable();
         this.setFullName(fullName);
     }
 
     public void changeEmail(String email) {
+        verifyIfChangeable();
         this.setEmail(email);
     }
 
     public void changePhone(String phone) {
+        verifyIfChangeable();
         this.setPhone(phone);
     }
 
@@ -197,6 +206,12 @@ public class Customer {
     private void setLoyaltyPoints(Integer loyaltyPoints) {
         Objects.requireNonNull(loyaltyPoints);
         this.loyaltyPoints = loyaltyPoints;
+    }
+
+    private void verifyIfChangeable() {
+        if (this.isArchived()) {
+            throw new CustomerArchivedException();
+        }
     }
 
     @Override

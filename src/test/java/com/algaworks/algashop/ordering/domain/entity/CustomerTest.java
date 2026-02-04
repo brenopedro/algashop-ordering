@@ -1,11 +1,13 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
+import com.algaworks.algashop.ordering.domain.excpetion.CustomerArchivedException;
 import com.algaworks.algashop.ordering.domain.utility.IdGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
+import static com.algaworks.algashop.ordering.domain.excpetion.ErrorMessages.ERROR_CUSTOMER_ARCHIVED;
 import static com.algaworks.algashop.ordering.domain.excpetion.ErrorMessages.VALIDATION_ERROR_EMAIL_IS_INVALID;
 import static org.assertj.core.api.Assertions.*;
 
@@ -69,8 +71,42 @@ class CustomerTest {
                 c -> assertThat(c.phone()).isEqualTo("000-000-0000"),
                 c -> assertThat(c.document()).isEqualTo("000-000-0000"),
                 c -> assertThat(c.isArchived()).isTrue(),
-                c -> assertThat(c.birthDate()).isNull()
+                c -> assertThat(c.birthDate()).isNull(),
+                c -> assertThat(c.isPromotionNotificationsAllowed()).isFalse()
         );
+    }
+
+    @Test
+    void givenUArchivedCustomer_whenTryToUpdate_shouldGenerateException() {
+        Customer customer = new Customer(
+                IdGenerator.generateTimeBasedUUID(),
+                "John Doe",
+                LocalDate.of(1991, 7, 25),
+                "joh.doe@gmail.com",
+                "1234567890",
+                "123.456.789-00",
+                true,
+                true,
+                OffsetDateTime.now(),
+                OffsetDateTime.now(),
+                0
+        );
+
+        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(customer::archive)
+                .withMessage(ERROR_CUSTOMER_ARCHIVED);
+        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.addLoyaltyPoints(10))
+                .withMessage(ERROR_CUSTOMER_ARCHIVED);
+        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(customer::enablePromotionNotifications)
+                .withMessage(ERROR_CUSTOMER_ARCHIVED);
+        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(customer::disablePromotionNotifications)
+                .withMessage(ERROR_CUSTOMER_ARCHIVED);
+        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changeName("Jane Doe"))
+                .withMessage(ERROR_CUSTOMER_ARCHIVED);
+        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changeEmail("jane.doe@gmail.com"))
+                .withMessage(ERROR_CUSTOMER_ARCHIVED);
+        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changePhone("123-123-1234"))
+                .withMessage(ERROR_CUSTOMER_ARCHIVED);
+
     }
 
 }
