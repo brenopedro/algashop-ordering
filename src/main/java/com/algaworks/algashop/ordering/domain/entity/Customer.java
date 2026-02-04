@@ -1,15 +1,14 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
-import org.apache.commons.validator.routines.EmailValidator;
+import com.algaworks.algashop.ordering.domain.validator.FieldValidator;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-@Getter(onMethod_ = {@Accessors(fluent = true)})
+import static com.algaworks.algashop.ordering.domain.excpetion.ErrorMessages.*;
+
 public class Customer {
 
     private UUID id;
@@ -87,35 +86,73 @@ public class Customer {
         this.setPhone(phone);
     }
 
+    public UUID id() {
+        return id;
+    }
+
+    public String fullName() {
+        return fullName;
+    }
+
+    public LocalDate birthDate() {
+        return birthDate;
+    }
+
+    public String email() {
+        return email;
+    }
+
+    public String phone() {
+        return phone;
+    }
+
+    public String document() {
+        return document;
+    }
+
+    public Boolean isPromotionNotificationsAllowed() {
+        return promotionNotificationsAllowed;
+    }
+
+    public Boolean isArchived() {
+        return archived;
+    }
+
+    public OffsetDateTime registeredAt() {
+        return registeredAt;
+    }
+
+    public OffsetDateTime archivedAt() {
+        return archivedAt;
+    }
+
+    public Integer loyaltyPoints() {
+        return loyaltyPoints;
+    }
+
     private void setId(UUID id) {
         Objects.requireNonNull(id);
         this.id = id;
     }
 
     private void setFullName(String fullName) {
-        Objects.requireNonNull(fullName, "Full name cannot be null");
+        Objects.requireNonNull(fullName, VALIDATION_ERROR_FULLNAME_IS_NULL);
         if (fullName.isBlank()) {
-            throw new IllegalArgumentException("Full name cannot be blank");
+            throw new IllegalArgumentException(VALIDATION_ERROR_FULLNAME_IS_BLANK);
         }
         this.fullName = fullName;
     }
 
     private void setBirthDate(LocalDate birthDate) {
-        Objects.requireNonNull(birthDate, "Birth date cannot be null");
+        Objects.requireNonNull(birthDate, VALIDATION_ERROR_BIRTHDATE_IS_NULL);
         if (birthDate.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Birth date cannot be in the future");
+            throw new IllegalArgumentException(VALIDATION_ERROR_BIRTHDATE_MUST_IN_PAST);
         }
         this.birthDate = birthDate;
     }
 
     private void setEmail(String email) {
-        Objects.requireNonNull(email, "Email cannot be null");
-        if (email.isBlank()) {
-            throw new IllegalArgumentException("Email cannot be blank");
-        }
-        if (!EmailValidator.getInstance().isValid(email)) {
-            throw new IllegalArgumentException("Email is not valid");
-        }
+        FieldValidator.requiresValidEmail(email, VALIDATION_ERROR_EMAIL_IS_INVALID);
         this.email = email;
     }
 
