@@ -8,6 +8,10 @@ public class ErrorMessages {
 
     public static final String VALIDATION_ERROR_FULLNAME_IS_NULL = "FullName cannot be null";
     public static final String VALIDATION_ERROR_FULLNAME_IS_BLANK = "FullName cannot be blank";
+    public static final String VALIDATION_ERROR_FIRSTNAME_IS_NULL = "Firstname cannot be null";
+    public static final String VALIDATION_ERROR_FIRSTNAME_IS_BLANK = "Firstname cannot be blank";
+    public static final String VALIDATION_ERROR_LASTNAME_IS_NULL = "Lastname cannot be null";
+    public static final String VALIDATION_ERROR_LASTNAME_IS_BLANK = "Lastname cannot be blank";
 
     public static final String VALIDATION_ERROR_EMAIL_IS_INVALID = "Email is invalid";
 
