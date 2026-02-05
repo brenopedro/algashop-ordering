@@ -57,10 +57,10 @@ public class Customer {
 
     public void addLoyaltyPoints(Integer points) {
         verifyIfChangeable();
-        if (this.loyaltyPoints == null) {
-            this.loyaltyPoints = 0;
+        if (points <= 0) {
+            throw new IllegalArgumentException(VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE);
         }
-        this.loyaltyPoints += points;
+        this.setLoyaltyPoints(this.loyaltyPoints + points);
     }
 
     public void archive() {
@@ -205,6 +205,9 @@ public class Customer {
 
     private void setLoyaltyPoints(Integer loyaltyPoints) {
         Objects.requireNonNull(loyaltyPoints);
+        if (loyaltyPoints < 0) {
+            throw new IllegalArgumentException(VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE);
+        }
         this.loyaltyPoints = loyaltyPoints;
     }
 

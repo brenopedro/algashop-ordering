@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-import static com.algaworks.algashop.ordering.domain.excpetion.ErrorMessages.ERROR_CUSTOMER_ARCHIVED;
-import static com.algaworks.algashop.ordering.domain.excpetion.ErrorMessages.VALIDATION_ERROR_EMAIL_IS_INVALID;
+import static com.algaworks.algashop.ordering.domain.excpetion.ErrorMessages.*;
 import static org.assertj.core.api.Assertions.*;
 
 class CustomerTest {
@@ -107,6 +106,45 @@ class CustomerTest {
         assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changePhone("123-123-1234"))
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);
 
+    }
+
+    @Test
+    void givenBrandNewCustomer_whenAddedPoints_shouldSumPoints() {
+        Customer customer = new Customer(
+                IdGenerator.generateTimeBasedUUID(),
+                "John Doe",
+                LocalDate.of(1991, 7, 25),
+                "joh.doe@gmail.com",
+                "1234567890",
+                "123.456.789-00",
+                true,
+                OffsetDateTime.now()
+        );
+
+        customer.addLoyaltyPoints(10);
+        assertThat(customer.loyaltyPoints()).isEqualTo(10);
+    }
+
+    @Test
+    void givenBrandNewCustomer_whenAddedInvalidPoints_shouldGenerateException() {
+        Customer customer = new Customer(
+                IdGenerator.generateTimeBasedUUID(),
+                "John Doe",
+                LocalDate.of(1991, 7, 25),
+                "joh.doe@gmail.com",
+                "1234567890",
+                "123.456.789-00",
+                true,
+                OffsetDateTime.now()
+        );
+
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
+                () -> customer.addLoyaltyPoints(-10))
+                .withMessage(VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE);
+
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
+                        () -> customer.addLoyaltyPoints(0))
+                .withMessage(VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE);
     }
 
 }
