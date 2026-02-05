@@ -6,6 +6,8 @@ import static com.algaworks.algashop.ordering.domain.excpetion.ErrorMessages.VAL
 
 public record LoyaltyPoints(Integer value) implements Comparable<LoyaltyPoints> {
 
+    public static final LoyaltyPoints ZERO = new LoyaltyPoints(0);
+
     public LoyaltyPoints() {
         this(0);
     }
@@ -24,7 +26,7 @@ public record LoyaltyPoints(Integer value) implements Comparable<LoyaltyPoints> 
 
     public LoyaltyPoints add(LoyaltyPoints loyaltyPoints) {
         Objects.requireNonNull(loyaltyPoints);
-        if (loyaltyPoints.value() < 0) {
+        if (loyaltyPoints.value() <= 0) {
             throw new IllegalArgumentException(VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE);
         }
         return new LoyaltyPoints(this.value() + loyaltyPoints.value());

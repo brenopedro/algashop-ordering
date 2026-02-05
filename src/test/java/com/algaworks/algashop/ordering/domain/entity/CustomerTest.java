@@ -1,7 +1,9 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
 import com.algaworks.algashop.ordering.domain.excpetion.CustomerArchivedException;
-import com.algaworks.algashop.ordering.domain.utility.IdGenerator;
+import com.algaworks.algashop.ordering.domain.valeuobject.CustomerId;
+import com.algaworks.algashop.ordering.domain.valeuobject.FullName;
+import com.algaworks.algashop.ordering.domain.valeuobject.LoyaltyPoints;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -16,8 +18,8 @@ class CustomerTest {
     @Test
     void givenInvalidEmail_whenTryCreateCustomer_shouldGenerateException() {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new Customer(
-                IdGenerator.generateTimeBasedUUID(),
-                "John Doe",
+                new CustomerId(),
+                new FullName("John", "Doe"),
                 LocalDate.of(1991, 7, 25),
                 "invalid-email",
                 "1234567890",
@@ -32,8 +34,8 @@ class CustomerTest {
     @Test
     void givenInvalidEmail_whenTryUpdateCustomerEmail_shouldGenerateException() {
         Customer customer = new Customer(
-                IdGenerator.generateTimeBasedUUID(),
-                "John Doe",
+                new CustomerId(),
+                new FullName("John", "Doe"),
                 LocalDate.of(1991, 7, 25),
                 "joh.doe@gmail.com",
                 "1234567890",
@@ -52,8 +54,8 @@ class CustomerTest {
     @Test
     void givenUnarchivedCustomer_whenArchive_shouldAnonymize() {
         Customer customer = new Customer(
-                IdGenerator.generateTimeBasedUUID(),
-                "John Doe",
+                new CustomerId(),
+                new FullName("John", "Doe"),
                 LocalDate.of(1991, 7, 25),
                 "joh.doe@gmail.com",
                 "1234567890",
@@ -65,7 +67,7 @@ class CustomerTest {
         customer.archive();
 
         assertWith(customer,
-                c -> assertThat(c.fullName()).isEqualTo("Anonymous"),
+                c -> assertThat(c.fullName()).isEqualTo(new FullName("Anonymous", "Anonymous")),
                 c -> assertThat(c.email()).isNotEqualTo("john.doe@gmail.com"),
                 c -> assertThat(c.phone()).isEqualTo("000-000-0000"),
                 c -> assertThat(c.document()).isEqualTo("000-000-0000"),
@@ -78,8 +80,8 @@ class CustomerTest {
     @Test
     void givenUArchivedCustomer_whenTryToUpdate_shouldGenerateException() {
         Customer customer = new Customer(
-                IdGenerator.generateTimeBasedUUID(),
-                "John Doe",
+                new CustomerId(),
+                new FullName("Anonymous", "Anonymous"),
                 LocalDate.of(1991, 7, 25),
                 "joh.doe@gmail.com",
                 "1234567890",
@@ -88,18 +90,18 @@ class CustomerTest {
                 true,
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
-                0
+                new LoyaltyPoints(10)
         );
 
         assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(customer::archive)
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);
-        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.addLoyaltyPoints(10))
+        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.addLoyaltyPoints(new LoyaltyPoints(10)))
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);
         assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(customer::enablePromotionNotifications)
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);
         assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(customer::disablePromotionNotifications)
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);
-        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changeName("Jane Doe"))
+        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changeName(new FullName("Jane", "Doe")))
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);
         assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changeEmail("jane.doe@gmail.com"))
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);
@@ -111,8 +113,8 @@ class CustomerTest {
     @Test
     void givenBrandNewCustomer_whenAddedPoints_shouldSumPoints() {
         Customer customer = new Customer(
-                IdGenerator.generateTimeBasedUUID(),
-                "John Doe",
+                new CustomerId(),
+                new FullName("John", "Doe"),
                 LocalDate.of(1991, 7, 25),
                 "joh.doe@gmail.com",
                 "1234567890",
@@ -121,15 +123,15 @@ class CustomerTest {
                 OffsetDateTime.now()
         );
 
-        customer.addLoyaltyPoints(10);
-        assertThat(customer.loyaltyPoints()).isEqualTo(10);
+        customer.addLoyaltyPoints(new LoyaltyPoints(10));
+        assertThat(customer.loyaltyPoints()).isEqualTo(new LoyaltyPoints(10));
     }
 
     @Test
     void givenBrandNewCustomer_whenAddedInvalidPoints_shouldGenerateException() {
         Customer customer = new Customer(
-                IdGenerator.generateTimeBasedUUID(),
-                "John Doe",
+                new CustomerId(),
+                new FullName("John", "Doe"),
                 LocalDate.of(1991, 7, 25),
                 "joh.doe@gmail.com",
                 "1234567890",
@@ -139,11 +141,11 @@ class CustomerTest {
         );
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
-                () -> customer.addLoyaltyPoints(-10))
+                () -> customer.addLoyaltyPoints(new LoyaltyPoints(-10)))
                 .withMessage(VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE);
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
-                        () -> customer.addLoyaltyPoints(0))
+                        () -> customer.addLoyaltyPoints(new LoyaltyPoints(0)))
                 .withMessage(VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE);
     }
 
