@@ -1,8 +1,8 @@
-package com.algaworks.algashop.ordering.domain.valeuobject;
+package com.algaworks.algashop.ordering.domain.valueobject;
 
 import org.junit.jupiter.api.Test;
 
-import static com.algaworks.algashop.ordering.domain.excpetion.ErrorMessages.VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE;
+import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 

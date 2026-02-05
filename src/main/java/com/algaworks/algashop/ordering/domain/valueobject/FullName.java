@@ -1,8 +1,8 @@
-package com.algaworks.algashop.ordering.domain.valeuobject;
+package com.algaworks.algashop.ordering.domain.valueobject;
 
 import java.util.Objects;
 
-import static com.algaworks.algashop.ordering.domain.excpetion.ErrorMessages.*;
+import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.*;
 
 public record FullName(String firstName, String lastName) {
 

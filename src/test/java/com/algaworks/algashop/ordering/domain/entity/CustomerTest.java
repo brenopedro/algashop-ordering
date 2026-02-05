@@ -1,15 +1,13 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
-import com.algaworks.algashop.ordering.domain.excpetion.CustomerArchivedException;
-import com.algaworks.algashop.ordering.domain.valeuobject.CustomerId;
-import com.algaworks.algashop.ordering.domain.valeuobject.FullName;
-import com.algaworks.algashop.ordering.domain.valeuobject.LoyaltyPoints;
+import com.algaworks.algashop.ordering.domain.exception.CustomerArchivedException;
+import com.algaworks.algashop.ordering.domain.valueobject.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-import static com.algaworks.algashop.ordering.domain.excpetion.ErrorMessages.*;
+import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.*;
 import static org.assertj.core.api.Assertions.*;
 
 class CustomerTest {
@@ -20,10 +18,10 @@ class CustomerTest {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new Customer(
                 new CustomerId(),
                 new FullName("John", "Doe"),
-                LocalDate.of(1991, 7, 25),
-                "invalid-email",
-                "1234567890",
-                "123.456.789-00",
+                new BirthDate(LocalDate.of(1991, 7, 25)),
+                new Email("invalid-email"),
+                new Phone("1234567890"),
+                new Document("123.456.789-00"),
                 true,
                 OffsetDateTime.now()
         )).withMessage(VALIDATION_ERROR_EMAIL_IS_INVALID);
@@ -36,16 +34,16 @@ class CustomerTest {
         Customer customer = new Customer(
                 new CustomerId(),
                 new FullName("John", "Doe"),
-                LocalDate.of(1991, 7, 25),
-                "joh.doe@gmail.com",
-                "1234567890",
-                "123.456.789-00",
+                new BirthDate(LocalDate.of(1991, 7, 25)),
+                new Email("joh.doe@gmail.com"),
+                new Phone("1234567890"),
+                new Document("123.456.789-00"),
                 true,
                 OffsetDateTime.now()
         );
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
-                        customer.changeEmail("invalid-email"))
+                        customer.changeEmail(new Email("invalid-email")))
                 .withMessage(VALIDATION_ERROR_EMAIL_IS_INVALID);
 
 
@@ -56,10 +54,10 @@ class CustomerTest {
         Customer customer = new Customer(
                 new CustomerId(),
                 new FullName("John", "Doe"),
-                LocalDate.of(1991, 7, 25),
-                "joh.doe@gmail.com",
-                "1234567890",
-                "123.456.789-00",
+                new BirthDate(LocalDate.of(1991, 7, 25)),
+                new Email("joh.doe@gmail.com"),
+                new Phone("1234567890"),
+                new Document("123.456.789-00"),
                 true,
                 OffsetDateTime.now()
         );
@@ -68,9 +66,9 @@ class CustomerTest {
 
         assertWith(customer,
                 c -> assertThat(c.fullName()).isEqualTo(new FullName("Anonymous", "Anonymous")),
-                c -> assertThat(c.email()).isNotEqualTo("john.doe@gmail.com"),
-                c -> assertThat(c.phone()).isEqualTo("000-000-0000"),
-                c -> assertThat(c.document()).isEqualTo("000-000-0000"),
+                c -> assertThat(c.email()).isNotEqualTo(new Email("john.doe@gmail.com")),
+                c -> assertThat(c.phone()).isEqualTo(new Phone("000-000-0000")),
+                c -> assertThat(c.document()).isEqualTo(new Document("000-000-0000")),
                 c -> assertThat(c.isArchived()).isTrue(),
                 c -> assertThat(c.birthDate()).isNull(),
                 c -> assertThat(c.isPromotionNotificationsAllowed()).isFalse()
@@ -82,10 +80,10 @@ class CustomerTest {
         Customer customer = new Customer(
                 new CustomerId(),
                 new FullName("Anonymous", "Anonymous"),
-                LocalDate.of(1991, 7, 25),
-                "joh.doe@gmail.com",
-                "1234567890",
-                "123.456.789-00",
+                new BirthDate(LocalDate.of(1991, 7, 25)),
+                new Email("joh.doe@gmail.com"),
+                new Phone("1234567890"),
+                new Document("123.456.789-00"),
                 true,
                 true,
                 OffsetDateTime.now(),
@@ -103,9 +101,9 @@ class CustomerTest {
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);
         assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changeName(new FullName("Jane", "Doe")))
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);
-        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changeEmail("jane.doe@gmail.com"))
+        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changeEmail(new Email("jane.doe@gmail.com")))
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);
-        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changePhone("123-123-1234"))
+        assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(() -> customer.changePhone(new Phone("123-123-1234")))
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);
 
     }
@@ -115,10 +113,10 @@ class CustomerTest {
         Customer customer = new Customer(
                 new CustomerId(),
                 new FullName("John", "Doe"),
-                LocalDate.of(1991, 7, 25),
-                "joh.doe@gmail.com",
-                "1234567890",
-                "123.456.789-00",
+                new BirthDate(LocalDate.of(1991, 7, 25)),
+                new Email("joh.doe@gmail.com"),
+                new Phone("1234567890"),
+                new Document("123.456.789-00"),
                 true,
                 OffsetDateTime.now()
         );
@@ -132,10 +130,10 @@ class CustomerTest {
         Customer customer = new Customer(
                 new CustomerId(),
                 new FullName("John", "Doe"),
-                LocalDate.of(1991, 7, 25),
-                "joh.doe@gmail.com",
-                "1234567890",
-                "123.456.789-00",
+                new BirthDate(LocalDate.of(1991, 7, 25)),
+                new Email("joh.doe@gmail.com"),
+                new Phone("1234567890"),
+                new Document("123.456.789-00"),
                 true,
                 OffsetDateTime.now()
         );
