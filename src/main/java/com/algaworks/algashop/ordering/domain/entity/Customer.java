@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.*;
+import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_DOCUMENT_IS_INVALID;
 
 public class Customer {
 
@@ -22,11 +23,12 @@ public class Customer {
     private OffsetDateTime registeredAt;
     private OffsetDateTime archivedAt;
     private LoyaltyPoints loyaltyPoints;
+    private Address address;
 
 
     public Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone, Document document,
                     Boolean promotionNotificationsAllowed, Boolean archived, OffsetDateTime registeredAt,
-                    OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints) {
+                    OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
         this.setId(id);
         this.setFullName(fullName);
         this.setBirthDate(birthDate);
@@ -38,10 +40,11 @@ public class Customer {
         this.setRegisteredAt(registeredAt);
         this.setArchivedAt(archivedAt);
         this.setLoyaltyPoints(loyaltyPoints);
+        this.setAddress(address);
     }
 
     public Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone, Document document,
-                    Boolean promotionNotificationsAllowed, OffsetDateTime registeredAt) {
+                    Boolean promotionNotificationsAllowed, OffsetDateTime registeredAt, Address address) {
         this.setId(id);
         this.setFullName(fullName);
         this.setBirthDate(birthDate);
@@ -52,6 +55,7 @@ public class Customer {
         this.setRegisteredAt(registeredAt);
         this.setArchived(false);
         this.setLoyaltyPoints(LoyaltyPoints.ZERO);
+        this.setAddress(address);
     }
 
     public void addLoyaltyPoints(LoyaltyPoints loyaltyPointsAdded) {
@@ -69,6 +73,9 @@ public class Customer {
         this.setBirthDate(null);
         this.setEmail(new Email(String.format("%s@anonymous.com", UUID.randomUUID())));
         this.setPromotionNotificationsAllowed(false);
+        this.setAddress(this.address.toBuilder()
+                .number("Anonymous")
+                .complement(null).build());
 
     }
 
@@ -95,6 +102,11 @@ public class Customer {
     public void changePhone(Phone phone) {
         verifyIfChangeable();
         this.setPhone(phone);
+    }
+
+    public void changeAddress(Address address) {
+        verifyIfChangeable();
+        this.setAddress(address);
     }
 
     public CustomerId id() {
@@ -141,13 +153,17 @@ public class Customer {
         return loyaltyPoints;
     }
 
+    public Address address() {
+        return address;
+    }
+
     private void setId(CustomerId id) {
         Objects.requireNonNull(id);
         this.id = id;
     }
 
     private void setFullName(FullName fullName) {
-        Objects.requireNonNull(fullName, VALIDATION_ERROR_FULLNAME_IS_NULL);
+        Objects.requireNonNull(fullName, VALIDATION_ERROR_FULLNAME_IS_INVALID);
         this.fullName = fullName;
     }
 
@@ -160,17 +176,17 @@ public class Customer {
     }
 
     private void setEmail(Email email) {
-        Objects.requireNonNull(email, VALIDATION_ERROR_EMAIL_IS_NULL);
+        Objects.requireNonNull(email, VALIDATION_ERROR_EMAIL_IS_INVALID);
         this.email = email;
     }
 
     private void setPhone(Phone phone) {
-        Objects.requireNonNull(phone, VALIDATION_ERROR_PHONE_IS_NULL);
+        Objects.requireNonNull(phone, VALIDATION_ERROR_PHONE_IS_INVALID);
         this.phone = phone;
     }
 
     private void setDocument(Document document) {
-        Objects.requireNonNull(document, VALIDATION_ERROR_DOCUMENT_IS_NULL);
+        Objects.requireNonNull(document, VALIDATION_ERROR_DOCUMENT_IS_INVALID);
         this.document = document;
     }
 
@@ -196,6 +212,11 @@ public class Customer {
     private void setLoyaltyPoints(LoyaltyPoints loyaltyPoints) {
         Objects.requireNonNull(loyaltyPoints);
         this.loyaltyPoints = loyaltyPoints;
+    }
+
+    private void setAddress(Address address) {
+        Objects.requireNonNull(address);
+        this.address = address;
     }
 
     private void verifyIfChangeable() {

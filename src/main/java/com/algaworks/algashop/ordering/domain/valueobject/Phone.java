@@ -1,17 +1,13 @@
 package com.algaworks.algashop.ordering.domain.valueobject;
 
-import java.util.Objects;
+import com.algaworks.algashop.ordering.domain.validator.FieldValidator;
 
-import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_PHONE_IS_BLANK;
+import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_PHONE_IS_INVALID;
 
 public record Phone(String value) {
 
     public Phone {
-        Objects.requireNonNull(value);
-
-        if (value.isBlank()) {
-            throw new IllegalArgumentException(VALIDATION_ERROR_PHONE_IS_BLANK);
-        }
+        FieldValidator.requiresNonBlank(value, VALIDATION_ERROR_PHONE_IS_INVALID);
     }
 
     @Override

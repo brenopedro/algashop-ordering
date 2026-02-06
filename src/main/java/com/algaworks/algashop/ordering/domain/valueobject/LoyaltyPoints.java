@@ -2,7 +2,7 @@ package com.algaworks.algashop.ordering.domain.valueobject;
 
 import java.util.Objects;
 
-import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_LOYALTY_POINTS_IS_NULL;
+import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_LOYALTY_POINTS_IS_INVALID;
 import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE;
 
 public record LoyaltyPoints(Integer value) implements Comparable<LoyaltyPoints> {
@@ -14,7 +14,7 @@ public record LoyaltyPoints(Integer value) implements Comparable<LoyaltyPoints> 
     }
 
     public LoyaltyPoints {
-        Objects.requireNonNull(value, VALIDATION_ERROR_LOYALTY_POINTS_IS_NULL);
+        Objects.requireNonNull(value, VALIDATION_ERROR_LOYALTY_POINTS_IS_INVALID);
         if (value < 0) {
             throw new IllegalArgumentException(VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE);
         }
@@ -25,7 +25,7 @@ public record LoyaltyPoints(Integer value) implements Comparable<LoyaltyPoints> 
     }
 
     public LoyaltyPoints add(LoyaltyPoints loyaltyPoints) {
-        Objects.requireNonNull(loyaltyPoints, VALIDATION_ERROR_LOYALTY_POINTS_IS_NULL);
+        Objects.requireNonNull(loyaltyPoints, VALIDATION_ERROR_LOYALTY_POINTS_IS_INVALID);
         if (loyaltyPoints.value() <= 0) {
             throw new IllegalArgumentException(VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE);
         }
