@@ -5,6 +5,9 @@ public class ErrorMessages {
     private ErrorMessages() {}
 
     public static final String VALIDATION_ERROR_CUSTOMER_ID_IS_INVALID = "CustomerId is invalid";
+    public static final String VALIDATION_ERROR_ORDER_ID_IS_INVALID = "OrderId is invalid";
+    public static final String VALIDATION_ERROR_ORDER_ITEM_ID_IS_INVALID = "OrderItemId is invalid";
+    public static final String VALIDATION_ERROR_PRODUCT_ID_IS_INVALID = "ProductId is invalid";
 
     public static final String VALIDATION_ERROR_BIRTHDATE_MUST_IN_PAST = "BirthDate must be a past date";
     public static final String VALIDATION_ERROR_BIRTHDATE_IS_INVALID = "BirthDate is invalid";

@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.domain.valueobject;
+package com.algaworks.algashop.ordering.domain.valueobject.id;
 
 import com.algaworks.algashop.ordering.domain.utility.IdGenerator;
 
@@ -9,12 +9,12 @@ import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.VAL
 
 public record CustomerId(UUID value) {
 
-    public CustomerId() {
-        this(IdGenerator.generateTimeBasedUUID());
-    }
-
     public CustomerId {
         Objects.requireNonNull(value, VALIDATION_ERROR_CUSTOMER_ID_IS_INVALID);
+    }
+
+    public CustomerId() {
+        this(IdGenerator.generateTimeBasedUUID());
     }
 
     @Override
