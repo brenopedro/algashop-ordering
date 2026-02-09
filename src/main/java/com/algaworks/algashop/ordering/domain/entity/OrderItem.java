@@ -2,9 +2,11 @@ package com.algaworks.algashop.ordering.domain.entity;
 
 import com.algaworks.algashop.ordering.domain.valueobject.Money;
 import com.algaworks.algashop.ordering.domain.valueobject.ProductName;
+import com.algaworks.algashop.ordering.domain.valueobject.Quantity;
 import com.algaworks.algashop.ordering.domain.valueobject.id.OrderId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.OrderItemId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
+import lombok.Builder;
 
 import java.util.Objects;
 
@@ -17,12 +19,13 @@ public class OrderItem {
     private ProductName productName;
 
     private Money price;
-    private Integer quantity;
+    private Quantity quantity;
 
     private Money totalAmount;
 
-    public OrderItem(OrderItemId id, OrderId orderId, ProductId productId,
-                     ProductName productName, Money price, Integer quantity,
+    @Builder(builderClassName = "ExistingOrderItemBuilder", builderMethodName = "existing")
+    private OrderItem(OrderItemId id, OrderId orderId, ProductId productId,
+                     ProductName productName, Money price, Quantity quantity,
                      Money totalAmount) {
 
         this.setId(id);
@@ -32,6 +35,20 @@ public class OrderItem {
         this.setPrice(price);
         this.setQuantity(quantity);
         this.setTotalAmount(totalAmount);
+    }
+
+    @Builder(builderClassName = "BrandNewOrderItemBuilder", builderMethodName = "brandNew")
+    public static OrderItem createBrandNew(OrderId orderId, ProductId productId,
+                     ProductName productName, Money price, Quantity quantity) {
+
+        return new OrderItem(new OrderItemId(),
+                orderId,
+                productId,
+                productName,
+                price,
+                quantity,
+                Money.ZERO
+        );
     }
 
     public OrderItemId id() {
@@ -54,7 +71,7 @@ public class OrderItem {
         return price;
     }
 
-    public Integer quantity() {
+    public Quantity quantity() {
         return quantity;
     }
 
@@ -87,7 +104,7 @@ public class OrderItem {
         this.price = price;
     }
 
-    private void setQuantity(Integer quantity) {
+    private void setQuantity(Quantity quantity) {
         Objects.requireNonNull(quantity);
         this.quantity = quantity;
     }
