@@ -30,7 +30,13 @@ public class ErrorMessages {
     public static final String VALIDATION_ERROR_NEIGHBORHOOD_IS_INVALID = "Neighborhood is invalid";
     public static final String VALIDATION_ERROR_CITY_IS_INVALID = "City is invalid";
     public static final String VALIDATION_ERROR_STATE_IS_INVALID = "State is invalid";
+    public static final String VALIDATION_ERROR_ADDRESS_IS_INVALID = "Address is invalid";
 
+    public static final String VALIDATION_ERROR_MONEY_IS_INVALID = "Money is invalid";
+
+    public static final String VALIDATION_ERROR_QUANTITY_IS_INVALID = "Quantity is invalid";
+
+    public static final String VALIDATION_ERROR_PRODUCT_NAME_IS_INVALID = "Product name is invalid";
 
     public static final String ERROR_CUSTOMER_ARCHIVED = "Customer is already archived";
 }
