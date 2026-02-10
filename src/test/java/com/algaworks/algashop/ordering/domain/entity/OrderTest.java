@@ -1,8 +1,13 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
+import com.algaworks.algashop.ordering.domain.valueobject.Money;
+import com.algaworks.algashop.ordering.domain.valueobject.ProductName;
+import com.algaworks.algashop.ordering.domain.valueobject.Quantity;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
+import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class OrderTest {
@@ -12,6 +17,17 @@ class OrderTest {
         Order order = Order.draft(new CustomerId());
 
         assertNotNull(order.id());
+    }
+
+    @Test
+    void shouldAddItem() {
+        Order order = Order.draft(new CustomerId());
+
+        order.addItem(new ProductId(),
+                new ProductName("Product"), new Money("10"), new Quantity(2));
+
+        assertNotNull(order.items());
+        assertThat(order.items()).hasSize(1);
     }
 
 }
