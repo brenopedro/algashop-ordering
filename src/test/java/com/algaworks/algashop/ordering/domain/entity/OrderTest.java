@@ -47,4 +47,19 @@ class OrderTest {
 
     }
 
+    @Test
+    void shouldCalculateTotals() {
+        Order order = Order.draft(new CustomerId());
+
+        order.addItem(new ProductId(),
+                new ProductName("Product"), new Money("100"), new Quantity(2));
+
+        order.addItem(new ProductId(),
+                new ProductName("Product 2"), new Money("20"), new Quantity(5));
+
+
+        assertThat(order.totalAmount()).isEqualTo(new Money("300"));
+        assertThat(order.totalItems()).isEqualTo(new Quantity(7));
+    }
+
 }
