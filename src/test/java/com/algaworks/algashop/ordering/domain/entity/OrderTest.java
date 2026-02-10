@@ -7,6 +7,9 @@ import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -28,6 +31,20 @@ class OrderTest {
 
         assertNotNull(order.items());
         assertThat(order.items()).hasSize(1);
+    }
+
+    @Test
+    void shouldGenerateExceptionWhenTryToChangeItemSet() {
+        Order order = Order.draft(new CustomerId());
+
+        order.addItem(new ProductId(),
+                new ProductName("Product"), new Money("10"), new Quantity(2));
+
+        Set<OrderItem> items = order.items();
+
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(items::clear);
+
     }
 
 }
