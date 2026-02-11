@@ -1,0 +1,26 @@
+package com.algaworks.algashop.ordering.domain.entity;
+
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+
+class OrderStatusTest {
+
+    @Test
+    void shouldChangeTo() {
+        assertThat(OrderStatus.DRAFT.canChangeTo(OrderStatus.PLACED)).isTrue();
+        assertThat(OrderStatus.PLACED.canChangeTo(OrderStatus.PAID)).isTrue();
+        assertThat(OrderStatus.PAID.canChangeTo(OrderStatus.READY)).isTrue();
+        assertThat(OrderStatus.DRAFT.canChangeTo(OrderStatus.CANCELED)).isTrue();
+        assertThat(OrderStatus.PLACED.canChangeTo(OrderStatus.CANCELED)).isTrue();
+        assertThat(OrderStatus.PAID.canChangeTo(OrderStatus.CANCELED)).isTrue();
+        assertThat(OrderStatus.READY.canChangeTo(OrderStatus.CANCELED)).isTrue();
+    }
+
+    @Test
+    void shouldNotChangeTo() {
+        assertThat(OrderStatus.DRAFT.canNotChangeTo(OrderStatus.READY)).isTrue();
+    }
+
+}
