@@ -42,4 +42,6 @@ public class ErrorMessages {
     public static final String VALIDATION_ERROR_PRODUCT_NAME_IS_INVALID = "Product name is invalid";
 
     public static final String ERROR_CUSTOMER_ARCHIVED = "Customer is already archived";
+
+    public static final String ERROR_ORDER_STATUS_CANNOT_BE_CHANGED = "Order %s cannot change status from %s to %s";
 }
