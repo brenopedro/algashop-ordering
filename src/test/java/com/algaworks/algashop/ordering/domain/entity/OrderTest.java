@@ -1,15 +1,17 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
+import com.algaworks.algashop.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
 import com.algaworks.algashop.ordering.domain.exception.OrderStatusCannotBeChangedException;
-import com.algaworks.algashop.ordering.domain.valueobject.Money;
-import com.algaworks.algashop.ordering.domain.valueobject.ProductName;
-import com.algaworks.algashop.ordering.domain.valueobject.Quantity;
+import com.algaworks.algashop.ordering.domain.valueobject.*;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertWith;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -80,6 +82,94 @@ class OrderTest {
 
         assertThatExceptionOfType(OrderStatusCannotBeChangedException.class)
                 .isThrownBy(order::place);
+    }
+
+    @Test
+    void givenDraftOrder_whenChangePaymentMethod_shouldAllowChange() {
+        Order order = Order.draft(new CustomerId());
+
+        order.changePaymentMethod(PaymentMethod.CREDIT_CARD);
+
+        assertThat(order.paymentMethod()).isEqualTo(PaymentMethod.CREDIT_CARD);
+    }
+
+    @Test
+    void givenDraftOrder_whenChangeBillingInfo_shouldAllowChange() {
+        Order order = Order.draft(new CustomerId());
+
+        Address address = Address.builder()
+                .street("Main Street")
+                .number("123")
+                .neighborhood("Downtown")
+                .city("Anytown")
+                .state("State")
+                .zipCode(new ZipCode("12345"))
+                .build();
+
+        BillingInfo billingInfo = BillingInfo.builder()
+                .document(new Document("123456789"))
+                .phone(new Phone("1234567890"))
+                .fullName(new FullName("John", "Doe"))
+                .address(address)
+                .build();
+
+        order.changeBillingInfo(billingInfo);
+
+        assertThat(order.billing()).isEqualTo(billingInfo);
+    }
+
+    @Test
+    void givenDraftOrder_whenChangeShippingInfo_shouldAllowChange() {
+        Order order = Order.draft(new CustomerId());
+
+        Address address = Address.builder()
+                .street("Main Street")
+                .number("123")
+                .neighborhood("Downtown")
+                .city("Anytown")
+                .state("State")
+                .zipCode(new ZipCode("12345"))
+                .build();
+
+        ShippingInfo shippingInfo = ShippingInfo.builder()
+                .document(new Document("123456789"))
+                .phone(new Phone("1234567890"))
+                .fullName(new FullName("John", "Doe"))
+                .address(address)
+                .build();
+
+        order.changeShippingInfo(shippingInfo, Money.ZERO, LocalDate.now().plusDays(1));
+
+        assertWith(order,
+                o -> assertThat(o.shipping()).isEqualTo(shippingInfo),
+                o -> assertThat(o.shippingCost()).isEqualTo(Money.ZERO),
+                o -> assertThat(o.expectedDeliveryDate()).isEqualTo(LocalDate.now().plusDays(1))
+        );
+    }
+
+    @Test
+    void givenDraftOrderAndDeliveryDateInPast_whenChangeShippingInfo_shouldThrowException() {
+        Order order = Order.draft(new CustomerId());
+
+        Address address = Address.builder()
+                .street("Main Street")
+                .number("123")
+                .neighborhood("Downtown")
+                .city("Anytown")
+                .state("State")
+                .zipCode(new ZipCode("12345"))
+                .build();
+
+        ShippingInfo shippingInfo = ShippingInfo.builder()
+                .document(new Document("123456789"))
+                .phone(new Phone("1234567890"))
+                .fullName(new FullName("John", "Doe"))
+                .address(address)
+                .build();
+
+        assertThatExceptionOfType(OrderInvalidShippingDeliveryDateException.class)
+                .isThrownBy(() -> order.changeShippingInfo(shippingInfo, Money.ZERO,
+                        LocalDate.now().minusDays(2)));
     }
 
 }

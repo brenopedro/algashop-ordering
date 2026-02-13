@@ -44,4 +44,6 @@ public class ErrorMessages {
     public static final String ERROR_CUSTOMER_ARCHIVED = "Customer is already archived";
 
     public static final String ERROR_ORDER_STATUS_CANNOT_BE_CHANGED = "Order %s cannot change status from %s to %s";
+
+    public static final String ERROR_ORDER_DELIVERY_DATE_CANNOT_BE_IN_THE_PAST = "Order %s cannot have delivery date in the past";
 }
