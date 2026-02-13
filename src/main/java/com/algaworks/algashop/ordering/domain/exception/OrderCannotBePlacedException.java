@@ -2,11 +2,36 @@ package com.algaworks.algashop.ordering.domain.exception;
 
 import com.algaworks.algashop.ordering.domain.valueobject.id.OrderId;
 
-import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_ITEMS;
+import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.*;
 
 public class OrderCannotBePlacedException extends DomainException {
 
-    public OrderCannotBePlacedException(OrderId id) {
-        super(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_ITEMS, id));
+    private OrderCannotBePlacedException(String message) {
+        super(message);
     }
+
+    public static OrderCannotBePlacedException noShippingInfo(OrderId orderId) {
+        return new OrderCannotBePlacedException(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_SHIPPING_INFO, orderId.value()));
+    }
+
+    public static OrderCannotBePlacedException noBillingInfo(OrderId orderId) {
+        return new OrderCannotBePlacedException(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_BILLING_INFO, orderId.value()));
+    }
+
+    public static OrderCannotBePlacedException noExpectedDeliveryDate(OrderId orderId) {
+        return new OrderCannotBePlacedException(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_EXPECTED_DELIVERY_DATE, orderId.value()));
+    }
+
+    public static OrderCannotBePlacedException noShippingCost(OrderId orderId) {
+        return new OrderCannotBePlacedException(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_SHIPPING_COST, orderId.value()));
+    }
+
+    public static OrderCannotBePlacedException noPaymentMethod(OrderId orderId) {
+        return new OrderCannotBePlacedException(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_PAYMENT_METHOD, orderId.value()));
+    }
+
+    public static OrderCannotBePlacedException noItems(OrderId orderId) {
+        return new OrderCannotBePlacedException(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_ITEMS, orderId.value()));
+    }
+
 }
