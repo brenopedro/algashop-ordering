@@ -54,4 +54,6 @@ public class ErrorMessages {
     public static final String ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_SHIPPING_COST = "Order %s cannot be placed, it has no shipping cost";
     public static final String ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_PAYMENT_METHOD = "Order %s cannot be placed, it has no payment method";
 
+    public static final String ERROR_ORDER_DOES_NOT_CONTAIN_ORDER_ITEM = "Order %s does not contain order item %s";
+
 }
