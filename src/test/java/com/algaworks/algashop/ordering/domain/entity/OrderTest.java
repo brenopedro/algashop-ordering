@@ -67,18 +67,22 @@ class OrderTest {
 
     @Test
     public void givenDraftOrder_whenPlace_shouldChangeStatusToPlaced() {
-        Order order = Order.draft(new CustomerId());
-
+        Order order = OrderTestDataBuilder.anOrder().build();
         order.place();
-
         assertThat(order.isPlaced()).isTrue();
     }
 
     @Test
-    public void givenPlacedOrder_whenPlace_shouldThrowException() {
-        Order order = Order.draft(new CustomerId());
+    public void givenPlacedOrder_whenMarkAsPaid_shouldChangeStatusToPaid() {
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
+        order.markAsPaid();
+        assertThat(order.isPaid()).isTrue();
+        assertThat(order.paidAt()).isNotNull();
+    }
 
-        order.place();
+    @Test
+    public void givenPlacedOrder_whenPlace_shouldThrowException() {
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
 
         assertThatExceptionOfType(OrderStatusCannotBeChangedException.class)
                 .isThrownBy(order::place);
@@ -95,7 +99,7 @@ class OrderTest {
 
     @Test
     void givenDraftOrder_whenChangeBillingInfo_shouldAllowChange() {
-        Order order = Order.draft(new CustomerId());
+        Order order = OrderTestDataBuilder.anOrder().build();
 
         Address address = Address.builder()
                 .street("Main Street")
