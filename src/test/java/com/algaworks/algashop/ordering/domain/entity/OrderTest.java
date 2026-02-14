@@ -4,10 +4,8 @@ import com.algaworks.algashop.ordering.domain.exception.OrderInvalidShippingDeli
 import com.algaworks.algashop.ordering.domain.exception.OrderStatusCannotBeChangedException;
 import com.algaworks.algashop.ordering.domain.valueobject.*;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
-import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -29,8 +27,7 @@ class OrderTest {
     void shouldAddItem() {
         Order order = Order.draft(new CustomerId());
 
-        order.addItem(new ProductId(),
-                new ProductName("Product"), new Money("10"), new Quantity(2));
+        order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
 
         assertNotNull(order.items());
         assertThat(order.items()).hasSize(1);
@@ -40,8 +37,7 @@ class OrderTest {
     void shouldGenerateExceptionWhenTryToChangeItemSet() {
         Order order = Order.draft(new CustomerId());
 
-        order.addItem(new ProductId(),
-                new ProductName("Product"), new Money("10"), new Quantity(2));
+        order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
 
         Set<OrderItem> items = order.items();
 
@@ -54,14 +50,12 @@ class OrderTest {
     void shouldCalculateTotals() {
         Order order = Order.draft(new CustomerId());
 
-        order.addItem(new ProductId(),
-                new ProductName("Product"), new Money("100"), new Quantity(2));
+        order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
 
-        order.addItem(new ProductId(),
-                new ProductName("Product 2"), new Money("20"), new Quantity(5));
+        order.addItem(ProductTestDataBuilder.aProductAltRamMemory().build(), new Quantity(5));
 
 
-        assertThat(order.totalAmount()).isEqualTo(new Money("300"));
+        assertThat(order.totalAmount()).isEqualTo(new Money("7000"));
         assertThat(order.totalItems()).isEqualTo(new Quantity(7));
     }
 
@@ -180,14 +174,13 @@ class OrderTest {
     void givenDraftOrder_whenChangeItem_shouldRecalculate() {
         Order order = Order.draft(new CustomerId());
 
-        order.addItem(new ProductId(),
-                new ProductName("Product"), new Money("100"), new Quantity(2));
+        order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
 
         OrderItem item = order.items().iterator().next();
 
         order.changeItemQuantity(item.id(), new Quantity(5));
 
-        assertThat(order.totalAmount()).isEqualTo(new Money("500"));
+        assertThat(order.totalAmount()).isEqualTo(new Money("15000"));
         assertThat(order.totalItems()).isEqualTo(new Quantity(5));
     }
 

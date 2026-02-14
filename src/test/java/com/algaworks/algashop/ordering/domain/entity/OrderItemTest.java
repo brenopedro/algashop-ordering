@@ -15,18 +15,16 @@ class OrderItemTest {
     @Test
     void shouldGenerate() {
         OrderItem orderItem = OrderItem.brandNew()
-                .productId(new ProductId())
                 .orderId(new OrderId())
-                .productName(new ProductName("Test Product"))
-                .price(Money.ZERO)
+                .product(ProductTestDataBuilder.aProduct().build())
                 .quantity(new Quantity(1))
                 .build();
 
         assertNotNull(orderItem.id());
         assertNotNull(orderItem.orderId());
         assertNotNull(orderItem.productId());
-        assertEquals("Test Product", orderItem.productName().value());
-        assertEquals(Money.ZERO, orderItem.price());
+        assertEquals("Desktop", orderItem.productName().value());
+        assertEquals(new Money("3000"), orderItem.price());
         assertEquals(new Quantity(1), orderItem.quantity());
     }
 

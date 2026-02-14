@@ -2,7 +2,6 @@ package com.algaworks.algashop.ordering.domain.entity;
 
 import com.algaworks.algashop.ordering.domain.valueobject.*;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
-import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 
 import java.time.LocalDate;
 
@@ -37,10 +36,8 @@ public class OrderTestDataBuilder {
         order.changePaymentMethod(paymentMethod);
 
         if (withItems) {
-            order.addItem(new ProductId(), new ProductName("Notebook"),
-                    new Money("1000"), new Quantity(1));
-            order.addItem(new ProductId(), new ProductName("4GB RAM"),
-                    new Money("200"), new Quantity(5));
+            order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(1));
+            order.addItem(ProductTestDataBuilder.aProductAltRamMemory().build(), new Quantity(5));
         }
 
         switch (this.status) {
