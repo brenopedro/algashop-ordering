@@ -2,6 +2,7 @@ package com.algaworks.algashop.ordering.domain.entity;
 
 import com.algaworks.algashop.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
 import com.algaworks.algashop.ordering.domain.exception.OrderStatusCannotBeChangedException;
+import com.algaworks.algashop.ordering.domain.exception.ProductOutOfStockException;
 import com.algaworks.algashop.ordering.domain.valueobject.*;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
 import org.junit.jupiter.api.Test;
@@ -184,4 +185,11 @@ class OrderTest {
         assertThat(order.totalItems()).isEqualTo(new Quantity(5));
     }
 
+    @Test
+    void givenOutOfStockProduct_whenAddItem_shouldThrowException() {
+        Order order = Order.draft(new CustomerId());
+
+        assertThatExceptionOfType(ProductOutOfStockException.class)
+                .isThrownBy(() -> order.addItem(ProductTestDataBuilder.aProductUnavailable().build(), new Quantity(1)));
+    }
 }

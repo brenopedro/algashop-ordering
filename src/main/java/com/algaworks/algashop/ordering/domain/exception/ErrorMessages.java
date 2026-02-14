@@ -56,4 +56,6 @@ public class ErrorMessages {
 
     public static final String ERROR_ORDER_DOES_NOT_CONTAIN_ORDER_ITEM = "Order %s does not contain order item %s";
 
+    public static final String ERROR_PRODUCT_OUT_OF_STOCK = "Product %s is out of stock";
+
 }
