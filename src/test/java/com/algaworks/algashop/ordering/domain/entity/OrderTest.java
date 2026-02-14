@@ -5,191 +5,186 @@ import com.algaworks.algashop.ordering.domain.exception.OrderStatusCannotBeChang
 import com.algaworks.algashop.ordering.domain.exception.ProductOutOfStockException;
 import com.algaworks.algashop.ordering.domain.valueobject.*;
 import com.algaworks.algashop.ordering.domain.valueobject.id.CustomerId;
+import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertWith;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 class OrderTest {
 
     @Test
-    void shouldGenerate() {
+    public void shouldGenerate() {
         Order order = Order.draft(new CustomerId());
-
-        assertNotNull(order.id());
     }
 
     @Test
-    void shouldAddItem() {
+    public void shouldAddItem() {
         Order order = Order.draft(new CustomerId());
+        Product product = ProductTestDataBuilder.aProductAltMousePad().build();
+        ProductId productId = product.id();
 
-        order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
+        order.addItem(product, new Quantity(1));
 
-        assertNotNull(order.items());
-        assertThat(order.items()).hasSize(1);
-    }
+        Assertions.assertThat(order.items().size()).isEqualTo(1);
 
-    @Test
-    void shouldGenerateExceptionWhenTryToChangeItemSet() {
-        Order order = Order.draft(new CustomerId());
+        OrderItem orderItem = order.items().iterator().next();
 
-        order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
-
-        Set<OrderItem> items = order.items();
-
-        assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(items::clear);
-
-    }
-
-    @Test
-    void shouldCalculateTotals() {
-        Order order = Order.draft(new CustomerId());
-
-        order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
-
-        order.addItem(ProductTestDataBuilder.aProductAltRamMemory().build(), new Quantity(5));
-
-
-        assertThat(order.totalAmount()).isEqualTo(new Money("7000"));
-        assertThat(order.totalItems()).isEqualTo(new Quantity(7));
-    }
-
-    @Test
-    public void givenDraftOrder_whenPlace_shouldChangeStatusToPlaced() {
-        Order order = OrderTestDataBuilder.anOrder().build();
-        order.place();
-        assertThat(order.isPlaced()).isTrue();
-    }
-
-    @Test
-    public void givenPlacedOrder_whenMarkAsPaid_shouldChangeStatusToPaid() {
-        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
-        order.markAsPaid();
-        assertThat(order.isPaid()).isTrue();
-        assertThat(order.paidAt()).isNotNull();
-    }
-
-    @Test
-    public void givenPlacedOrder_whenPlace_shouldThrowException() {
-        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
-
-        assertThatExceptionOfType(OrderStatusCannotBeChangedException.class)
-                .isThrownBy(order::place);
-    }
-
-    @Test
-    void givenDraftOrder_whenChangePaymentMethod_shouldAllowChange() {
-        Order order = Order.draft(new CustomerId());
-
-        order.changePaymentMethod(PaymentMethod.CREDIT_CARD);
-
-        assertThat(order.paymentMethod()).isEqualTo(PaymentMethod.CREDIT_CARD);
-    }
-
-    @Test
-    void givenDraftOrder_whenChangeBillingInfo_shouldAllowChange() {
-        Order order = OrderTestDataBuilder.anOrder().build();
-
-        Address address = Address.builder()
-                .street("Main Street")
-                .number("123")
-                .neighborhood("Downtown")
-                .city("Anytown")
-                .state("State")
-                .zipCode(new ZipCode("12345"))
-                .build();
-
-        BillingInfo billingInfo = BillingInfo.builder()
-                .document(new Document("123456789"))
-                .phone(new Phone("1234567890"))
-                .fullName(new FullName("John", "Doe"))
-                .address(address)
-                .build();
-
-        order.changeBillingInfo(billingInfo);
-
-        assertThat(order.billing()).isEqualTo(billingInfo);
-    }
-
-    @Test
-    void givenDraftOrder_whenChangeShippingInfo_shouldAllowChange() {
-        Order order = Order.draft(new CustomerId());
-
-        Address address = Address.builder()
-                .street("Main Street")
-                .number("123")
-                .neighborhood("Downtown")
-                .city("Anytown")
-                .state("State")
-                .zipCode(new ZipCode("12345"))
-                .build();
-
-        ShippingInfo shippingInfo = ShippingInfo.builder()
-                .document(new Document("123456789"))
-                .phone(new Phone("1234567890"))
-                .fullName(new FullName("John", "Doe"))
-                .address(address)
-                .build();
-
-        order.changeShippingInfo(shippingInfo, Money.ZERO, LocalDate.now().plusDays(1));
-
-        assertWith(order,
-                o -> assertThat(o.shipping()).isEqualTo(shippingInfo),
-                o -> assertThat(o.shippingCost()).isEqualTo(Money.ZERO),
-                o -> assertThat(o.expectedDeliveryDate()).isEqualTo(LocalDate.now().plusDays(1))
+        Assertions.assertWith(orderItem,
+                (i) -> Assertions.assertThat(i.id()).isNotNull(),
+                (i) -> Assertions.assertThat(i.productName()).isEqualTo(new ProductName("Mouse Pad")),
+                (i) -> Assertions.assertThat(i.productId()).isEqualTo(productId),
+                (i) -> Assertions.assertThat(i.price()).isEqualTo(new Money("100")),
+                (i) -> Assertions.assertThat(i.quantity()).isEqualTo(new Quantity(1))
         );
     }
 
     @Test
-    void givenDraftOrderAndDeliveryDateInPast_whenChangeShippingInfo_shouldThrowException() {
+    public void shouldGenerateExceptionWhenTryToChangeItemSet() {
+        Order order = Order.draft(new CustomerId());
+        Product product = ProductTestDataBuilder.aProductAltMousePad().build();
+
+        order.addItem(product, new Quantity(1));
+
+        Set<OrderItem> items = order.items();
+
+        Assertions.assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(items::clear);
+    }
+
+    @Test
+    public void shouldCalculateTotals() {
         Order order = Order.draft(new CustomerId());
 
+        order.addItem(
+                ProductTestDataBuilder.aProductAltMousePad().build(),
+                new Quantity(2)
+        );
+
+        order.addItem(
+                ProductTestDataBuilder.aProductAltRamMemory().build(),
+                new Quantity(1)
+        );
+
+        Assertions.assertThat(order.totalAmount()).isEqualTo(new Money("400"));
+        Assertions.assertThat(order.totalItems()).isEqualTo(new Quantity(3));
+    }
+
+    @Test
+    public void givenDraftOrder_whenPlace_shouldChangeToPlaced() {
+        Order order = OrderTestDataBuilder.anOrder().build();
+        order.place();
+        Assertions.assertThat(order.isPlaced()).isTrue();
+    }
+
+    @Test
+    public void givenPlacedOrder_whenMarkAsPaid_shouldChangeToPaid() {
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
+        order.markAsPaid();
+        Assertions.assertThat(order.isPaid()).isTrue();
+        Assertions.assertThat(order.paidAt()).isNotNull();
+    }
+
+    @Test
+    public void givenPlacedOrder_whenTryToPlace_shouldGenerateException() {
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
+        Assertions.assertThatExceptionOfType(OrderStatusCannotBeChangedException.class)
+                .isThrownBy(order::place);
+    }
+
+    @Test
+    public void givenDraftOrder_whenChangePaymentMethod_shouldAllowChange() {
+        Order order = Order.draft(new CustomerId());
+        order.changePaymentMethod(PaymentMethod.CREDIT_CARD);
+        Assertions.assertWith(order.paymentMethod()).isEqualTo(PaymentMethod.CREDIT_CARD);
+    }
+
+    @Test
+    public void givenDraftOrder_whenChangeBillingInfo_shouldAllowChange() {
         Address address = Address.builder()
-                .street("Main Street")
-                .number("123")
-                .neighborhood("Downtown")
-                .city("Anytown")
-                .state("State")
-                .zipCode(new ZipCode("12345"))
-                .build();
+                .street("Bourbon Street")
+                .number("1234")
+                .neighborhood("North Ville")
+                .complement("apt. 11")
+                .city("Montfort")
+                .state("South Carolina")
+                .zipCode(new ZipCode("79911")).build();
 
-        ShippingInfo shippingInfo = ShippingInfo.builder()
-                .document(new Document("123456789"))
-                .phone(new Phone("1234567890"))
-                .fullName(new FullName("John", "Doe"))
+        BillingInfo billingInfo = BillingInfo.builder()
                 .address(address)
+                .document(new Document("225-09-1992"))
+                .phone(new Phone("123-111-9911"))
+                .fullName(new FullName("John", "Doe"))
                 .build();
 
-        assertThatExceptionOfType(OrderInvalidShippingDeliveryDateException.class)
-                .isThrownBy(() -> order.changeShippingInfo(shippingInfo, Money.ZERO,
-                        LocalDate.now().minusDays(2)));
+        Order order = Order.draft(new CustomerId());
+        order.changeBilling(billingInfo);
+
+        BillingInfo expectedBillingInfo = BillingInfo.builder()
+                .address(address)
+                .document(new Document("225-09-1992"))
+                .phone(new Phone("123-111-9911"))
+                .fullName(new FullName("John", "Doe"))
+                .build();
+
+        Assertions.assertThat(order.billing()).isEqualTo(expectedBillingInfo);
     }
 
     @Test
-    void givenDraftOrder_whenChangeItem_shouldRecalculate() {
+    public void givenDraftOrder_whenChangeShipping_shouldAllowChange() {
+        Shipping shipping = OrderTestDataBuilder.aShipping();
         Order order = Order.draft(new CustomerId());
 
-        order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
+        order.changeShipping(shipping);
 
-        OrderItem item = order.items().iterator().next();
-
-        order.changeItemQuantity(item.id(), new Quantity(5));
-
-        assertThat(order.totalAmount()).isEqualTo(new Money("15000"));
-        assertThat(order.totalItems()).isEqualTo(new Quantity(5));
+        Assertions.assertWith(order, o -> Assertions.assertThat(o.shipping()).isEqualTo(shipping));
     }
 
     @Test
-    void givenOutOfStockProduct_whenAddItem_shouldThrowException() {
+    public void givenDraftOrderAndDeliveryDateInThePast_whenChangeShipping_shouldNotAllowChange() {
+        LocalDate expectedDeliveryDate = LocalDate.now().minusDays(2);
+
+        Shipping shipping = OrderTestDataBuilder.aShipping().toBuilder()
+                .expectedDate(expectedDeliveryDate)
+                .build();
+
         Order order = Order.draft(new CustomerId());
 
-        assertThatExceptionOfType(ProductOutOfStockException.class)
-                .isThrownBy(() -> order.addItem(ProductTestDataBuilder.aProductUnavailable().build(), new Quantity(1)));
+        Assertions.assertThatExceptionOfType(OrderInvalidShippingDeliveryDateException.class)
+                .isThrownBy(()-> order.changeShipping(shipping));
     }
+
+    @Test
+    public void givenDraftOrder_whenChangeItem_shouldRecalculate() {
+        Order order = Order.draft(new CustomerId());
+
+        order.addItem(
+                ProductTestDataBuilder.aProductAltMousePad().build(),
+                new Quantity(3)
+        );
+
+        OrderItem orderItem = order.items().iterator().next();
+
+        order.changeItemQuantity(orderItem.id(), new Quantity(5));
+
+        Assertions.assertWith(order,
+                (o) -> Assertions.assertThat(o.totalAmount()).isEqualTo(new Money("500")),
+                (o) -> Assertions.assertThat(o.totalItems()).isEqualTo(new Quantity(5))
+        );
+    }
+
+    @Test
+    public void givenOutOfStockProduct_whenTryToAddToAnOrder_shouldNotAllow() {
+        Order order = Order.draft(new CustomerId());
+
+        ThrowableAssert.ThrowingCallable addItemTask = () -> order.addItem(
+                ProductTestDataBuilder.aProductUnavailable().build(),
+                new Quantity(1)
+        );
+
+        Assertions.assertThatExceptionOfType(ProductOutOfStockException.class).isThrownBy(addItemTask);
+    }
+
 }

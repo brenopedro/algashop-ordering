@@ -11,19 +11,11 @@ public class OrderCannotBePlacedException extends DomainException {
     }
 
     public static OrderCannotBePlacedException noShippingInfo(OrderId orderId) {
-        return new OrderCannotBePlacedException(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_SHIPPING_INFO, orderId.value()));
+        return new OrderCannotBePlacedException(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_SHIPPING, orderId.value()));
     }
 
     public static OrderCannotBePlacedException noBillingInfo(OrderId orderId) {
         return new OrderCannotBePlacedException(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_BILLING_INFO, orderId.value()));
-    }
-
-    public static OrderCannotBePlacedException noExpectedDeliveryDate(OrderId orderId) {
-        return new OrderCannotBePlacedException(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_EXPECTED_DELIVERY_DATE, orderId.value()));
-    }
-
-    public static OrderCannotBePlacedException noShippingCost(OrderId orderId) {
-        return new OrderCannotBePlacedException(String.format(ERROR_ORDER_CANNOT_BE_PLACED_HAS_NO_SHIPPING_COST, orderId.value()));
     }
 
     public static OrderCannotBePlacedException noPaymentMethod(OrderId orderId) {
