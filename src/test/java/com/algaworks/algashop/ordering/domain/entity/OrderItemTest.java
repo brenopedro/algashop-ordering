@@ -1,31 +1,35 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
-import com.algaworks.algashop.ordering.domain.valueobject.Money;
-import com.algaworks.algashop.ordering.domain.valueobject.ProductName;
+import com.algaworks.algashop.ordering.domain.valueobject.Product;
 import com.algaworks.algashop.ordering.domain.valueobject.Quantity;
 import com.algaworks.algashop.ordering.domain.valueobject.id.OrderId;
-import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertWith;
 
 class OrderItemTest {
 
     @Test
-    void shouldGenerate() {
+    public void shouldGenerateBrandNewOrderItem() {
+        Product product = ProductTestDataBuilder.aProduct().build();
+        Quantity quantity = new Quantity(1);
+        OrderId orderId = new OrderId();
+
         OrderItem orderItem = OrderItem.brandNew()
-                .orderId(new OrderId())
-                .product(ProductTestDataBuilder.aProduct().build())
-                .quantity(new Quantity(1))
+                .product(product)
+                .quantity(quantity)
+                .orderId(orderId)
                 .build();
 
-        assertNotNull(orderItem.id());
-        assertNotNull(orderItem.orderId());
-        assertNotNull(orderItem.productId());
-        assertEquals("Desktop", orderItem.productName().value());
-        assertEquals(new Money("3000"), orderItem.price());
-        assertEquals(new Quantity(1), orderItem.quantity());
+        assertWith(orderItem,
+                o-> assertThat(o.id()).isNotNull(),
+                o-> assertThat(o.productId()).isEqualTo(product.id()),
+                o-> assertThat(o.productName()).isEqualTo(product.name()),
+                o-> assertThat(o.price()).isEqualTo(product.price()),
+                o-> assertThat(o.quantity()).isEqualTo(quantity),
+                o-> assertThat(o.orderId()).isEqualTo(orderId)
+        );
     }
 
 }
