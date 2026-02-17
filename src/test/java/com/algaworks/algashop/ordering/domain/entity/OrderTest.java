@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
+import com.algaworks.algashop.ordering.domain.exception.OrderCannotBeEditedException;
 import com.algaworks.algashop.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
 import com.algaworks.algashop.ordering.domain.exception.OrderStatusCannotBeChangedException;
 import com.algaworks.algashop.ordering.domain.exception.ProductOutOfStockException;
@@ -184,5 +185,4 @@ class OrderTest {
 
         assertThatExceptionOfType(ProductOutOfStockException.class).isThrownBy(addItemTask);
     }
-
 }
