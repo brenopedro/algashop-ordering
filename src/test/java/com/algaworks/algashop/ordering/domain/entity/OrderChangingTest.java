@@ -9,7 +9,7 @@ import com.algaworks.algashop.ordering.domain.valueobject.Shipping;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-public class OrderChangingTest {
+class OrderChangingTest {
 
     @Test
     void givenDraftOrder_whenChangeIsPerformed_shouldNotThrowException() {

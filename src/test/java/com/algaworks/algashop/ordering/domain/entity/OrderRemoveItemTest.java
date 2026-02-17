@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class OrderRemoveItemTest {
+class OrderRemoveItemTest {
 
     @Test
     void givenDraftOrder_whenRemoveItem_shouldRecalculate() {
