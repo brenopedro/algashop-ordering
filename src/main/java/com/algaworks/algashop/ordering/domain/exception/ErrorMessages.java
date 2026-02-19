@@ -8,6 +8,8 @@ public class ErrorMessages {
     public static final String VALIDATION_ERROR_ORDER_ID_IS_INVALID = "OrderId is invalid";
     public static final String VALIDATION_ERROR_ORDER_ITEM_ID_IS_INVALID = "OrderItemId is invalid";
     public static final String VALIDATION_ERROR_PRODUCT_ID_IS_INVALID = "ProductId is invalid";
+    public static final String VALIDATION_ERROR_SHOPPING_CART_ID_IS_INVALID = "ShoppingCartId is invalid";
+    public static final String VALIDATION_ERROR_SHOPPING_CART_ITEM_ID_IS_INVALID = "ShoppingCartItemId is invalid";
 
     public static final String VALIDATION_ERROR_BIRTHDATE_MUST_IN_PAST = "BirthDate must be a past date";
     public static final String VALIDATION_ERROR_BIRTHDATE_IS_INVALID = "BirthDate is invalid";
@@ -61,5 +63,9 @@ public class ErrorMessages {
     public static final String ERROR_PRODUCT_OUT_OF_STOCK = "Product %s is out of stock";
 
     public static final String ERROR_ORDER_CANNOT_BE_EDITED = "Order %s with status %s cannot be edited";
+
+    public static final String ERROR_SHOPPING_CART_DOES_NOT_CONTAIN_ITEM = "ShoppingCart %s does not contain item %s";
+    public static final String ERROR_SHOPPING_CART_DOES_NOT_CONTAIN_PRODUCT = "ShoppingCart %s does not contain product %s";
+    public static final String ERROR_SHOPPING_CART_ITEM_INCOMPATIBLE_PRODUCT = "ShoppingCartItem %s is incompatible with product %s";
 
 }

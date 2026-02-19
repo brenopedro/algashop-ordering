@@ -5,15 +5,15 @@ import com.algaworks.algashop.ordering.domain.utility.IdGenerator;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_SHOPPING_CART_ITEM_ID_IS_INVALID;
+import static com.algaworks.algashop.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_SHOPPING_CART_ID_IS_INVALID;
 
-public record ShoppingCartItemId(UUID value) {
+public record ShoppingCartId(UUID value) {
 
-    public ShoppingCartItemId {
-        Objects.requireNonNull(value, VALIDATION_ERROR_SHOPPING_CART_ITEM_ID_IS_INVALID);
+    public ShoppingCartId {
+        Objects.requireNonNull(value, VALIDATION_ERROR_SHOPPING_CART_ID_IS_INVALID);
     }
 
-    public ShoppingCartItemId() {
+    public ShoppingCartId() {
         this(IdGenerator.generateTimeBasedUUID());
     }
 
