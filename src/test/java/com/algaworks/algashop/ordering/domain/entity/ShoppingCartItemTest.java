@@ -1,0 +1,123 @@
+package com.algaworks.algashop.ordering.domain.entity;
+
+import com.algaworks.algashop.ordering.domain.valueobject.Money;
+import com.algaworks.algashop.ordering.domain.valueobject.Product;
+import com.algaworks.algashop.ordering.domain.valueobject.ProductName;
+import com.algaworks.algashop.ordering.domain.valueobject.Quantity;
+import com.algaworks.algashop.ordering.domain.valueobject.id.ProductId;
+import com.algaworks.algashop.ordering.domain.valueobject.id.ShoppingCartId;
+import com.algaworks.algashop.ordering.domain.valueobject.id.ShoppingCartItemId;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertWith;
+
+class ShoppingCartItemTest {
+
+    @Test
+    void givenValidData_whenCreateNewItem_shouldInitializeCorrectly() {
+        ShoppingCartItem item = ShoppingCartItemTestDataBuilder.aShoppingCartItem()
+                .productName(new ProductName("Notebook"))
+                .price(new Money("2000"))
+                .quantity(new Quantity(2))
+                .available(true)
+                .build();
+
+        assertWith(item,
+                i -> assertThat(i.id()).isNotNull(),
+                i -> assertThat(i.shoppingCartId()).isNotNull(),
+                i -> assertThat(i.productId()).isNotNull(),
+                i -> assertThat(i.name()).isEqualTo(new ProductName("Notebook")),
+                i -> assertThat(i.price()).isEqualTo(new Money("2000")),
+                i -> assertThat(i.quantity()).isEqualTo(new Quantity(2)),
+                i -> assertThat(i.isAvailable()).isTrue(),
+                i -> assertThat(i.totalAmount()).isEqualTo(new Money("4000"))
+        );
+    }
+
+    @Test
+    void givenItem_whenChangeQuantity_shouldRecalculateTotal() {
+        ShoppingCartItem item = ShoppingCartItemTestDataBuilder.aShoppingCartItem()
+                .price(new Money("1000"))
+                .quantity(new Quantity(1))
+                .build();
+
+        item.changeQuantity(new Quantity(3));
+
+        assertWith(item,
+                i -> assertThat(i.quantity()).isEqualTo(new Quantity(3)),
+                i -> assertThat(i.totalAmount()).isEqualTo(new Money("3000"))
+        );
+    }
+
+    @Test
+    void givenItem_whenChangePrice_shouldRecalculateTotal() {
+        ShoppingCartItem item = ShoppingCartItemTestDataBuilder.aShoppingCartItem()
+                .price(new Money("1500"))
+                .quantity(new Quantity(2))
+                .build();
+
+        Product product = ProductTestDataBuilder.aProduct().build();
+        item.refresh(product);
+
+        assertWith(item,
+                i -> assertThat(i.price()).isEqualTo(product.price()),
+                i -> assertThat(i.totalAmount()).isEqualTo(product.price().multiply(new Quantity(2)))
+        );
+    }
+
+    @Test
+    void givenItem_whenChangeAvailability_shouldUpdateStatus() {
+        ShoppingCartItem item = ShoppingCartItemTestDataBuilder.aShoppingCartItem()
+                .available(true)
+                .build();
+
+        Product product = ProductTestDataBuilder.aProduct()
+                .inStock(false)
+                .build();
+
+        item.refresh(product);
+
+        assertThat(item.isAvailable()).isFalse();
+    }
+
+    @Test
+    void givenEqualIds_whenCompareItems_shouldBeEqual() {
+        ShoppingCartId cartId = new ShoppingCartId();
+        ProductId productId = new ProductId();
+        ShoppingCartItemId shoppingCartItemId = new ShoppingCartItemId();
+
+        ShoppingCartItem item1 = ShoppingCartItem.existing()
+                .id(shoppingCartItemId)
+                .shoppingCartId(cartId)
+                .productId(productId)
+                .productName(new ProductName("Mouse"))
+                .price(new Money("100"))
+                .quantity(new Quantity(1))
+                .available(true)
+                .totalAmount(new Money("100"))
+                .build();
+
+        ShoppingCartItem item2 = ShoppingCartItem.existing()
+                .id(shoppingCartItemId)
+                .shoppingCartId(cartId)
+                .productId(productId)
+                .productName(new ProductName("Notebook"))
+                .price(new Money("100"))
+                .quantity(new Quantity(1))
+                .available(true)
+                .totalAmount(new Money("100"))
+                .build();
+
+        assertThat(item1).isEqualTo(item2);
+        assertThat(item1.hashCode()).isEqualTo(item2.hashCode());
+    }
+
+    @Test
+    void givenDifferentIds_whenCompareItems_shouldNotBeEqual() {
+        ShoppingCartItem item1 = ShoppingCartItemTestDataBuilder.aShoppingCartItem().build();
+        ShoppingCartItem item2 = ShoppingCartItemTestDataBuilder.aShoppingCartItem().build();
+
+        assertThat(item1).isNotEqualTo(item2);
+    }
+}

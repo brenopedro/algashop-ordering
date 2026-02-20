@@ -13,10 +13,7 @@ import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class ShoppingCart {
 
@@ -38,7 +35,7 @@ public class ShoppingCart {
         this.setItems(items);
     }
 
-    public ShoppingCart startShopping(CustomerId customerId) {
+    public static ShoppingCart startShopping(CustomerId customerId) {
         return new ShoppingCart(new ShoppingCartId(), customerId, Money.ZERO, Quantity.ZERO,
                 OffsetDateTime.now(), new HashSet<>());
     }
@@ -66,8 +63,6 @@ public class ShoppingCart {
 
         searchItemByProduct(product.id())
                 .ifPresentOrElse(i -> updateItem(i, product, quantity), () -> this.insertItem(shoppingCartItem));
-
-        this.items.add(shoppingCartItem);
 
         this.recalculateTotals();
     }
@@ -112,7 +107,7 @@ public class ShoppingCart {
     }
 
     public boolean containsUnavailableItems() {
-        return this.items().stream().anyMatch(i -> !i.available());
+        return this.items().stream().anyMatch(i -> !i.isAvailable());
     }
 
     public boolean isEmpty() {
@@ -140,7 +135,7 @@ public class ShoppingCart {
     }
 
     public Set<ShoppingCartItem> items() {
-        return items;
+        return Collections.unmodifiableSet(items);
     }
 
     private void updateItem(ShoppingCartItem shoppingCartItem, Product product, Quantity quantity) {

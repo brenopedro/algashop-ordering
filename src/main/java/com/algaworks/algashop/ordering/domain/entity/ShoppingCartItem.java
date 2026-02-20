@@ -17,7 +17,7 @@ public class ShoppingCartItem {
     private ShoppingCartItemId id;
     private ShoppingCartId shoppingCartId;
     private ProductId productId;
-    private ProductName name;
+    private ProductName productName;
     private Money price;
     private Quantity quantity;
     private Money totalAmount;
@@ -25,12 +25,12 @@ public class ShoppingCartItem {
 
     @Builder(builderClassName = "ExistingShoppingCarItemBuilder", builderMethodName = "existing")
     public ShoppingCartItem(ShoppingCartItemId id, ShoppingCartId shoppingCartId,
-                            ProductId productId, ProductName name, Money price, Quantity quantity,
+                            ProductId productId, ProductName productName, Money price, Quantity quantity,
                             Money totalAmount, Boolean available) {
         this.setId(id);
         this.setShoppingCartId(shoppingCartId);
         this.setProductId(productId);
-        this.setName(name);
+        this.setProductName(productName);
         this.setPrice(price);
         this.setQuantity(quantity);
         this.setTotalAmount(totalAmount);
@@ -55,7 +55,7 @@ public class ShoppingCartItem {
             throw new ShoppingCartItemIncompatibleProductException(this.id(), this.productId());
         }
 
-        this.setName(product.name());
+        this.setProductName(product.name());
         this.setPrice(product.price());
         this.setAvailable(product.inStock());
         this.recalculateTotals();
@@ -81,7 +81,7 @@ public class ShoppingCartItem {
     }
 
     public ProductName name() {
-        return name;
+        return productName;
     }
 
     public Money price() {
@@ -96,7 +96,7 @@ public class ShoppingCartItem {
         return totalAmount;
     }
 
-    public Boolean available() {
+    public Boolean isAvailable() {
         return available;
     }
 
@@ -119,9 +119,9 @@ public class ShoppingCartItem {
         this.productId = productId;
     }
 
-    private void setName(ProductName name) {
-        Objects.requireNonNull(name);
-        this.name = name;
+    private void setProductName(ProductName productName) {
+        Objects.requireNonNull(productName);
+        this.productName = productName;
     }
 
     private void setPrice(Money price) {
