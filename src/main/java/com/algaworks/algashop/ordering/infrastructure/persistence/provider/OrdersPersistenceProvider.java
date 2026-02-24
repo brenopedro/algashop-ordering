@@ -16,14 +16,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrdersPersistenceProvider implements Orders {
 
-    private final OrderPersistenceEntityRepository persistenceEntityRepository;
+    private final OrderPersistenceEntityRepository persistenceRepository;
     private final OrderPersistenceEntityAssembler assembler;
     private final OrderPersistenceEntityDisassembler disassembler;
 
     @Override
     public Optional<Order> ofId(OrderId orderId) {
-        Optional<OrderPersistenceEntity> possibleEntity = persistenceEntityRepository
-                .findById(orderId.value().toLong());
+        Optional<OrderPersistenceEntity> possibleEntity = persistenceRepository.findById(
+                orderId.value().toLong());
         return possibleEntity.map(disassembler::toDomainEntity);
     }
 
@@ -34,12 +34,31 @@ public class OrdersPersistenceProvider implements Orders {
 
     @Override
     public void add(Order aggregateRoot) {
-        OrderPersistenceEntity persistenceEntity = assembler.fromDomain(aggregateRoot);
-        persistenceEntityRepository.saveAndFlush(persistenceEntity);
+        long orderId = aggregateRoot.id().value().toLong();
+
+        persistenceRepository.findById(orderId)
+                .ifPresentOrElse(
+                        (persistenceEntity) -> {
+                            update(aggregateRoot, persistenceEntity);
+                        },
+                        ()-> {
+                            insert(aggregateRoot);
+                        }
+                );
     }
 
     @Override
     public int count() {
         return 0;
+    }
+
+    private void update(Order aggregateRoot, OrderPersistenceEntity persistenceEntity) {
+        persistenceEntity = assembler.merge(persistenceEntity, aggregateRoot);
+        persistenceRepository.saveAndFlush(persistenceEntity);
+    }
+
+    private void insert(Order aggregateRoot) {
+        OrderPersistenceEntity persistenceEntity = assembler.fromDomain(aggregateRoot);
+        persistenceRepository.saveAndFlush(persistenceEntity);
     }
 }
