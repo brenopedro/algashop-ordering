@@ -31,6 +31,7 @@ dependencies {
 	implementation 'io.hypersistence:hypersistence-tsid:2.1.4'
 	implementation 'commons-validator:commons-validator:1.9.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-h2console'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
