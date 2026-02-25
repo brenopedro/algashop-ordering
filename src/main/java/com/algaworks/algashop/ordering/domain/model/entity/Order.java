@@ -304,7 +304,7 @@ public class Order implements AggregateRoot<OrderId> {
         }
     }
 
-    public void setVersion(Long version) {
+    private void setVersion(Long version) {
         this.version = version;
     }
 
