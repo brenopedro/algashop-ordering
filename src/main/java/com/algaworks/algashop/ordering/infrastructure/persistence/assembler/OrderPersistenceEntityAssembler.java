@@ -22,7 +22,7 @@ public class OrderPersistenceEntityAssembler {
         to.setPaidAt(from.paidAt());
         to.setCanceledAt(from.canceledAt());
         to.setReadyAt(from.readyAt());
-
+        to.setVersion(from.version());
         return to;
     }
 }
