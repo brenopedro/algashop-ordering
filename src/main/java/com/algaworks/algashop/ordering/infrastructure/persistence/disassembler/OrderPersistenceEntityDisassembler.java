@@ -3,10 +3,12 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.disassembler;
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderStatus;
 import com.algaworks.algashop.ordering.domain.model.entity.PaymentMethod;
-import com.algaworks.algashop.ordering.domain.model.valueobject.Money;
-import com.algaworks.algashop.ordering.domain.model.valueobject.Quantity;
+import com.algaworks.algashop.ordering.domain.model.valueobject.*;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
+import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.BillingEmbeddable;
+import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.RecipientEmbeddable;
+import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.ShippingEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +31,46 @@ public class OrderPersistenceEntityDisassembler {
                 .readyAt(persistenceEntity.getReadyAt())
                 .items(new HashSet<>())
                 .version(persistenceEntity.getVersion())
+                .billing(toBilling(persistenceEntity.getBilling()))
+                .shipping(toShipping(persistenceEntity.getShipping()))
+                .build();
+    }
+
+    private Shipping toShipping(ShippingEmbeddable shipping) {
+        return Shipping.builder()
+                .recipient(toRecipient(shipping.getRecipient()))
+                .address(toAddress(shipping.getAddress()))
+                .cost(new Money(shipping.getCost()))
+                .expectedDate(shipping.getExpectedDate())
+                .build();
+    }
+
+    private Billing toBilling(BillingEmbeddable billing) {
+        return Billing.builder()
+                .fullName(new FullName(billing.getFirstName(), billing.getLastName()))
+                .document(new Document(billing.getDocument()))
+                .phone(new Phone(billing.getPhone()))
+                .address(toAddress(billing.getAddress()))
+                .build();
+    }
+
+    private Address toAddress(com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.AddressEmbeddable address) {
+        return Address.builder()
+                .street(address.getStreet())
+                .number(address.getNumber())
+                .complement(address.getComplement())
+                .neighborhood(address.getNeighborhood())
+                .city(address.getCity())
+                .state(address.getState())
+                .zipCode(new ZipCode(address.getZipCode()))
+                .build();
+    }
+
+    private Recipient toRecipient(RecipientEmbeddable recipient) {
+        return Recipient.builder()
+                .fullName(new FullName(recipient.getFirstName(), recipient.getLastName()))
+                .document(new Document(recipient.getDocument()))
+                .phone(new Phone(recipient.getPhone()))
                 .build();
     }
 }
