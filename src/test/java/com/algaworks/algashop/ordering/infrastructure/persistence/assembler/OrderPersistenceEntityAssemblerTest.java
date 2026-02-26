@@ -1,12 +1,18 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.assembler;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
+import com.algaworks.algashop.ordering.domain.model.entity.OrderItem;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class OrderPersistenceEntityAssemblerTest {
 
@@ -15,42 +21,69 @@ class OrderPersistenceEntityAssemblerTest {
     @Test
     void shouldConvertToDomain() {
         Order order = OrderTestDataBuilder.anOrder().build();
-        OrderPersistenceEntity persistenceEntity = assembler.fromDomain(order);
-
-
-        assertThat(persistenceEntity).satisfies(
-            pe -> assertThat(pe.getId()).isEqualTo(order.id().value().toLong()),
-            pe -> assertThat(pe.getCustomerId()).isEqualTo(order.customerId().value()),
-            pe -> assertThat(pe.getTotalAmount()).isEqualTo(order.totalAmount().value()),
-            pe -> assertThat(pe.getTotalItems()).isEqualTo(order.totalItems().value()),
-            pe -> assertThat(pe.getStatus()).isEqualTo(order.status().name()),
-            pe -> assertThat(pe.getPaymentMethod()).isEqualTo(order.paymentMethod().name()),
-            pe -> assertThat(pe.getPlacedAt()).isEqualTo(order.placedAt()),
-            pe -> assertThat(pe.getPaidAt()).isEqualTo(order.paidAt()),
-            pe -> assertThat(pe.getCanceledAt()).isEqualTo(order.canceledAt()),
-            pe -> assertThat(pe.getReadyAt()).isEqualTo(order.readyAt())
+        OrderPersistenceEntity orderPersistenceEntity = assembler.fromDomain(order);
+        assertThat(orderPersistenceEntity).satisfies(
+                p-> assertThat(p.getId()).isEqualTo(order.id().value().toLong()),
+                p-> assertThat(p.getCustomerId()).isEqualTo(order.customerId().value()),
+                p -> assertThat(p.getTotalAmount()).isEqualTo(order.totalAmount().value()),
+                p -> assertThat(p.getTotalItems()).isEqualTo(order.totalItems().value()),
+                p -> assertThat(p.getStatus()).isEqualTo(order.status().name()),
+                p -> assertThat(p.getPaymentMethod()).isEqualTo(order.paymentMethod().name()),
+                p -> assertThat(p.getPlacedAt()).isEqualTo(order.placedAt()),
+                p -> assertThat(p.getPaidAt()).isEqualTo(order.paidAt()),
+                p -> assertThat(p.getCanceledAt()).isEqualTo(order.canceledAt()),
+                p -> assertThat(p.getReadyAt()).isEqualTo(order.readyAt())
         );
     }
 
     @Test
-    void shouldMerge() {
-        Order order = OrderTestDataBuilder.anOrder().build();
-        OrderPersistenceEntity persistenceEntity = new OrderPersistenceEntity();
+    void givenOrderWithNotItems_shouldRemovePersistenceEntityItems() {
+        Order order = OrderTestDataBuilder.anOrder().withItems(false).build();
+        OrderPersistenceEntity orderPersistenceEntity = OrderPersistenceEntityTestDataBuilder.existingOrder().build();
+
+        assertThat(order.items()).isEmpty();
+        assertThat(orderPersistenceEntity.getItems()).isNotEmpty();
+
+        assembler.merge(orderPersistenceEntity, order);
+
+        assertThat(orderPersistenceEntity.getItems()).isEmpty();
+    }
+
+    @Test
+    void givenOrderWithItems_shouldAddToPersistenceEntity() {
+        Order order = OrderTestDataBuilder.anOrder().withItems(true).build();
+        OrderPersistenceEntity persistenceEntity = OrderPersistenceEntityTestDataBuilder.existingOrder().items(new HashSet<>()).build();
+
+        assertThat(order.items()).isNotEmpty();
+        assertThat(persistenceEntity.getItems()).isEmpty();
 
         assembler.merge(persistenceEntity, order);
 
-        assertThat(persistenceEntity).satisfies(
-                pe -> assertThat(pe.getId()).isEqualTo(order.id().value().toLong()),
-                pe -> assertThat(pe.getCustomerId()).isEqualTo(order.customerId().value()),
-                pe -> assertThat(pe.getTotalAmount()).isEqualTo(order.totalAmount().value()),
-                pe -> assertThat(pe.getTotalItems()).isEqualTo(order.totalItems().value()),
-                pe -> assertThat(pe.getStatus()).isEqualTo(order.status().name()),
-                pe -> assertThat(pe.getPaymentMethod()).isEqualTo(order.paymentMethod().name()),
-                pe -> assertThat(pe.getPlacedAt()).isEqualTo(order.placedAt()),
-                pe -> assertThat(pe.getPaidAt()).isEqualTo(order.paidAt()),
-                pe -> assertThat(pe.getCanceledAt()).isEqualTo(order.canceledAt()),
-                pe -> assertThat(pe.getReadyAt()).isEqualTo(order.readyAt())
-        );
+        assertThat(persistenceEntity.getItems()).isNotEmpty();
+        assertThat(persistenceEntity.getItems().size()).isEqualTo(order.items().size());
+    }
+
+    @Test
+    void givenOrderWithItems_whenMerge_shouldRemoveMergeCorrectly() {
+        Order order = OrderTestDataBuilder.anOrder().withItems(true).build();
+
+        assertThat(order.items().size()).isEqualTo(2);
+
+        Set<OrderItemPersistenceEntity> orderItemPersistenceEntities = order.items().stream()
+                .map(assembler::fromDomain)
+                .collect(Collectors.toSet());
+
+        OrderPersistenceEntity persistenceEntity = OrderPersistenceEntityTestDataBuilder.existingOrder()
+                .items(orderItemPersistenceEntities)
+                .build();
+
+        OrderItem orderItem = order.items().iterator().next();
+        order.removeItem(orderItem.id());
+
+        assembler.merge(persistenceEntity, order);
+
+        assertThat(persistenceEntity.getItems()).isNotEmpty();
+        assertThat(persistenceEntity.getItems().size()).isEqualTo(order.items().size());
     }
 
 }
