@@ -3,18 +3,21 @@ package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderStatus;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
-import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
 import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
-import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 @DataJpaTest
 @Import({
@@ -60,7 +63,15 @@ class OrdersPersistenceProviderIT {
         assertThat(persistenceEntity.getCreatedByUserId()).isNotNull();
         assertThat(persistenceEntity.getLastModifiedAt()).isNotNull();
         assertThat(persistenceEntity.getLastModifiedByUserId()).isNotNull();
+    }
 
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void shouldAddFindAndNotFailWhenNoTransaction() {
+        Order order = OrderTestDataBuilder.anOrder().build();
+        persistenceProvider.add(order);
+
+        assertThatNoException().isThrownBy(() -> persistenceProvider.ofId(order.id()).orElseThrow());
     }
 
 }

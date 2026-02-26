@@ -72,7 +72,7 @@ class OrdersIT {
     }
 
     @Test
-    public void shouldNotAllowStaleUpdates() {
+    void shouldNotAllowStaleUpdates() {
         Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
         orders.add(order);
 
@@ -94,5 +94,22 @@ class OrdersIT {
 
     }
 
+    @Test
+    void shouldCountExitingOrders() {
+        assertThat(orders.count()).isZero();
 
+        Order order = OrderTestDataBuilder.anOrder().build();
+        orders.add(order);
+
+        assertThat(orders.count()).isOne();
+    }
+
+    @Test
+    void shouldReturnIfOrderExists() {
+        Order order = OrderTestDataBuilder.anOrder().build();
+        orders.add(order);
+
+        assertThat(orders.exists(order.id())).isTrue();
+        assertThat(orders.exists(new OrderId())).isFalse();
+    }
 }
