@@ -25,7 +25,7 @@ public class IdGenerator {
     * TSID_NODE_COUNT
     */
 
-    public static TSID generatiTSID() {
+    public static TSID generateTSID() {
         return tsidFactory.generate();
     }
 }

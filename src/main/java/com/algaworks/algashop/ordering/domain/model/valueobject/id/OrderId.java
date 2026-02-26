@@ -14,7 +14,7 @@ public record OrderId(TSID value) {
     }
 
     public OrderId() {
-        this(IdGenerator.generatiTSID());
+        this(IdGenerator.generateTSID());
     }
 
     public OrderId(Long value) {

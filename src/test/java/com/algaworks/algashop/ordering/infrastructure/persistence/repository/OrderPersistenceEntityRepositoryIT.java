@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Import;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(SpringDataAuditingConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(SpringDataAuditingConfig.class)
 class OrderPersistenceEntityRepositoryIT {
 
     private final OrderPersistenceEntityRepository orderPersistenceEntityRepository;
@@ -28,23 +28,26 @@ class OrderPersistenceEntityRepositoryIT {
         OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder().build();
 
         orderPersistenceEntityRepository.saveAndFlush(entity);
-
         assertThat(orderPersistenceEntityRepository.existsById(entity.getId())).isTrue();
+
+        OrderPersistenceEntity savedEntity = orderPersistenceEntityRepository.findById(entity.getId()).orElseThrow();
+
+        assertThat(savedEntity.getItems()).isNotEmpty();
     }
 
     @Test
     void shouldCount() {
-        long count = orderPersistenceEntityRepository.count();
-        assertThat(count).isZero();
+        long ordersCount = orderPersistenceEntityRepository.count();
+        assertThat(ordersCount).isZero();
     }
 
     @Test
     void shouldSetAuditingValues() {
         OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder().build();
-
         entity = orderPersistenceEntityRepository.saveAndFlush(entity);
 
         assertThat(entity.getCreatedByUserId()).isNotNull();
+
         assertThat(entity.getLastModifiedAt()).isNotNull();
         assertThat(entity.getLastModifiedByUserId()).isNotNull();
     }
