@@ -60,14 +60,14 @@ class OrderPersistenceEntityAssemblerTest {
         assembler.merge(persistenceEntity, order);
 
         assertThat(persistenceEntity.getItems()).isNotEmpty();
-        assertThat(persistenceEntity.getItems().size()).isEqualTo(order.items().size());
+        assertThat(persistenceEntity.getItems()).hasSameSizeAs(order.items());
     }
 
     @Test
     void givenOrderWithItems_whenMerge_shouldRemoveMergeCorrectly() {
         Order order = OrderTestDataBuilder.anOrder().withItems(true).build();
 
-        assertThat(order.items().size()).isEqualTo(2);
+        assertThat(order.items()).hasSize(2);
 
         Set<OrderItemPersistenceEntity> orderItemPersistenceEntities = order.items().stream()
                 .map(assembler::fromDomain)
@@ -83,7 +83,7 @@ class OrderPersistenceEntityAssemblerTest {
         assembler.merge(persistenceEntity, order);
 
         assertThat(persistenceEntity.getItems()).isNotEmpty();
-        assertThat(persistenceEntity.getItems().size()).isEqualTo(order.items().size());
+        assertThat(persistenceEntity.getItems()).hasSameSizeAs(order.items());
     }
 
 }
