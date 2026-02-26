@@ -32,7 +32,7 @@ public class OrderItemPersistenceEntity {
     private OrderPersistenceEntity order;
 
     public Long getOrderId() {
-        if (getOrderId() == null) {
+        if (getOrder() == null) {
             return null;
         }
         return getOrder().getId();
