@@ -35,10 +35,7 @@ public class OrderPersistenceEntityDisassembler {
                 .paidAt(persistenceEntity.getPaidAt())
                 .canceledAt(persistenceEntity.getCanceledAt())
                 .readyAt(persistenceEntity.getReadyAt())
-                .items(new HashSet<>())
                 .version(persistenceEntity.getVersion())
-                .billing(toBilling(persistenceEntity.getBilling()))
-                .shipping(toShipping(persistenceEntity.getShipping()))
                 .items(toDomainEntity(persistenceEntity.getItems()))
                 .build();
     }
