@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class ShippingEmbeddable {
 
     private BigDecimal cost;
-    private LocalDateTime expectedDate;
+    private LocalDate expectedDate;
 
     @Embedded
     private AddressEmbeddable address;
