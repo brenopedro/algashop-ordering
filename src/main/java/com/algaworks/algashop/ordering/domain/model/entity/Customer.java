@@ -9,11 +9,9 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.algaworks.algashop.ordering.domain.model.exception.ErrorMessages.*;
-import static com.algaworks.algashop.ordering.domain.model.exception.ErrorMessages.VALIDATION_ERROR_DOCUMENT_IS_INVALID;
+import static com.algaworks.algashop.ordering.domain.model.exception.ErrorMessages.VALIDATION_ERROR_FULLNAME_IS_INVALID;
 
-public class Customer implements  AggregateRoot<CustomerId> {
-
+public class Customer implements AggregateRoot<CustomerId> {
     private CustomerId id;
     private FullName fullName;
     private BirthDate birthDate;
@@ -27,11 +25,14 @@ public class Customer implements  AggregateRoot<CustomerId> {
     private LoyaltyPoints loyaltyPoints;
     private Address address;
 
-    @Builder(builderClassName = "BrandNewCustomerBuilder", builderMethodName = "brandNew")
-    private static Customer createBrandNew(FullName fullName, BirthDate birthDate, Email email, Phone phone,
-                                    Document document, Boolean promotionNotificationsAllowed, Address address) {
+    private Long version;
 
+    @Builder(builderClassName = "BrandNewCustomerBuild", builderMethodName = "brandNew")
+    private static Customer createBrandNew(FullName fullName, BirthDate birthDate, Email email,
+                                           Phone phone, Document document, Boolean promotionNotificationsAllowed,
+                                           Address address) {
         return new Customer(new CustomerId(),
+                null,
                 fullName,
                 birthDate,
                 email,
@@ -45,11 +46,12 @@ public class Customer implements  AggregateRoot<CustomerId> {
                 address);
     }
 
-    @Builder(builderClassName = "ExistingCustomerBuilder", builderMethodName = "existing")
-    private Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone, Document document,
-                    Boolean promotionNotificationsAllowed, Boolean archived, OffsetDateTime registeredAt,
-                    OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
+    @Builder(builderClassName = "ExistingCustomerBuild", builderMethodName = "existing")
+    private Customer(CustomerId id, Long version, FullName fullName, BirthDate birthDate, Email email, Phone phone,
+                     Document document, Boolean promotionNotificationsAllowed, Boolean archived,
+                     OffsetDateTime registeredAt, OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
         this.setId(id);
+        this.setVersion(version);
         this.setFullName(fullName);
         this.setBirthDate(birthDate);
         this.setEmail(email);
@@ -74,14 +76,13 @@ public class Customer implements  AggregateRoot<CustomerId> {
         this.setArchivedAt(OffsetDateTime.now());
         this.setFullName(new FullName("Anonymous", "Anonymous"));
         this.setPhone(new Phone("000-000-0000"));
-        this.setDocument(new Document("000-000-0000"));
+        this.setDocument(new Document("000-00-0000"));
+        this.setEmail(new Email(UUID.randomUUID() + "@anonymous.com"));
         this.setBirthDate(null);
-        this.setEmail(new Email(String.format("%s@anonymous.com", UUID.randomUUID())));
         this.setPromotionNotificationsAllowed(false);
-        this.setAddress(this.address.toBuilder()
-                .number("Anonymous")
+        this.setAddress(this.address().toBuilder()
+                .number("Anonymized")
                 .complement(null).build());
-
     }
 
     public void enablePromotionNotifications() {
@@ -162,6 +163,14 @@ public class Customer implements  AggregateRoot<CustomerId> {
         return address;
     }
 
+    public Long version() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     private void setId(CustomerId id) {
         Objects.requireNonNull(id);
         this.id = id;
@@ -181,17 +190,17 @@ public class Customer implements  AggregateRoot<CustomerId> {
     }
 
     private void setEmail(Email email) {
-        Objects.requireNonNull(email, VALIDATION_ERROR_EMAIL_IS_INVALID);
+        Objects.requireNonNull(email);
         this.email = email;
     }
 
     private void setPhone(Phone phone) {
-        Objects.requireNonNull(phone, VALIDATION_ERROR_PHONE_IS_INVALID);
+        Objects.requireNonNull(phone);
         this.phone = phone;
     }
 
     private void setDocument(Document document) {
-        Objects.requireNonNull(document, VALIDATION_ERROR_DOCUMENT_IS_INVALID);
+        Objects.requireNonNull(document);
         this.document = document;
     }
 

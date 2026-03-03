@@ -29,9 +29,8 @@ public class OrdersPersistenceProvider implements Orders {
 
     @Override
     public Optional<Order> ofId(OrderId orderId) {
-        Optional<OrderPersistenceEntity> possibleEntity = persistenceRepository.findById(
-                orderId.value().toLong());
-        return possibleEntity.map(disassembler::toDomainEntity);
+        return persistenceRepository.findById(
+                orderId.value().toLong()).map(disassembler::toDomainEntity);
     }
 
     @Override
@@ -59,7 +58,7 @@ public class OrdersPersistenceProvider implements Orders {
     private void update(Order aggregateRoot, OrderPersistenceEntity persistenceEntity) {
         persistenceEntity = assembler.merge(persistenceEntity, aggregateRoot);
         entityManager.detach(persistenceEntity);
-        persistenceRepository.saveAndFlush(persistenceEntity);
+        persistenceEntity = persistenceRepository.saveAndFlush(persistenceEntity);
         updateVersion(aggregateRoot, persistenceEntity);
     }
 

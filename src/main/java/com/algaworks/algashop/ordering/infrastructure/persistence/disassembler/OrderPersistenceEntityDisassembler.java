@@ -9,6 +9,7 @@ import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderItemId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.ProductId;
+import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.AddressEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.BillingEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.RecipientEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.ShippingEmbeddable;
@@ -16,7 +17,6 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderIt
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -75,7 +75,7 @@ public class OrderPersistenceEntityDisassembler {
                 .build();
     }
 
-    private Address toAddress(com.algaworks.algashop.ordering.infrastructure.persistence.embeddable.AddressEmbeddable address) {
+    private Address toAddress(AddressEmbeddable address) {
         return Address.builder()
                 .street(address.getStreet())
                 .number(address.getNumber())

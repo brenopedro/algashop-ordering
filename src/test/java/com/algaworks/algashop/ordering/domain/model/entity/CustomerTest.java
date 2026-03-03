@@ -42,26 +42,26 @@ class CustomerTest {
                 c -> assertThat(c.fullName()).isEqualTo(new FullName("Anonymous", "Anonymous")),
                 c -> assertThat(c.email()).isNotEqualTo(new Email("john.doe@gmail.com")),
                 c -> assertThat(c.phone()).isEqualTo(new Phone("000-000-0000")),
-                c -> assertThat(c.document()).isEqualTo(new Document("000-000-0000")),
+                c -> assertThat(c.document()).isEqualTo(new Document("000-00-0000")),
                 c -> assertThat(c.isArchived()).isTrue(),
                 c -> assertThat(c.birthDate()).isNull(),
                 c -> assertThat(c.isPromotionNotificationsAllowed()).isFalse(),
                 c -> assertThat(c.address()).isEqualTo(
                         Address.builder()
                             .street("Bourbon Street")
-                            .number("Anonymous")
+                            .number("Anonymized")
                             .complement(null)
-                            .neighborhood("French Quarter")
-                            .city("New Orleans")
-                            .state("LA")
-                            .zipCode(new ZipCode("70178"))
+                            .neighborhood("North Ville")
+                            .city("York")
+                            .state("South California")
+                            .zipCode(new ZipCode("12345"))
                             .build())
         );
     }
 
     @Test
     void givenUArchivedCustomer_whenTryToUpdate_shouldGenerateException() {
-        Customer customer = CustomerTestDataBuilder.existingAnonymisedCustomer().build();
+        Customer customer = CustomerTestDataBuilder.existingAnonymizedCustomer().build();
 
         assertThatExceptionOfType(CustomerArchivedException.class).isThrownBy(customer::archive)
                 .withMessage(ERROR_CUSTOMER_ARCHIVED);

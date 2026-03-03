@@ -17,7 +17,7 @@ public class OrderPersistenceEntityTestDataBuilder {
                 .id(IdGenerator.generateTSID().toLong())
                 .customerId(IdGenerator.generateTimeBasedUUID())
                 .totalItems(3)
-                .totalAmount(new BigDecimal(1250))
+                .totalAmount(new BigDecimal("1250.00"))
                 .status("DRAFT")
                 .paymentMethod("CREDIT_CARD")
                 .placedAt(OffsetDateTime.now())
