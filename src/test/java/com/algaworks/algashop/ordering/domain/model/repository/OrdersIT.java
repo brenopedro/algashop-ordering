@@ -4,6 +4,7 @@ import com.algaworks.algashop.ordering.domain.model.entity.CustomerTestDataBuild
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderStatus;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.valueobject.Money;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.OrderId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
@@ -149,5 +150,33 @@ class OrdersIT {
 
          listedOrders = orders.placedByCustomerInYear(customerId, Year.now().minusYears(1));
          assertThat(listedOrders).isEmpty();
+    }
+
+    @Test
+    void shouldReturnTotalAmountByCustomer() {
+        CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+
+        Order order1 = OrderTestDataBuilder.anOrder().status(OrderStatus.PAID).build();
+        Order order2 = OrderTestDataBuilder.anOrder().status(OrderStatus.PAID).build();
+        orders.add(order1);
+        orders.add(order2);
+
+        Money salesQuantity = orders.totalSoldForCustomer(customerId);
+        Money expectedTotalAmount = order1.totalAmount().add(order2.totalAmount());
+        assertThat(salesQuantity).isEqualTo(expectedTotalAmount);
+        assertThat(orders.totalSoldForCustomer(new CustomerId())).isEqualTo(Money.ZERO);
+    }
+
+    @Test
+    void shouldReturnSalesQuantityByCustomer() {
+        CustomerId customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID;
+
+        Order order1 = OrderTestDataBuilder.anOrder().status(OrderStatus.PAID).build();
+        Order order2 = OrderTestDataBuilder.anOrder().status(OrderStatus.PAID).build();
+        orders.add(order1);
+        orders.add(order2);
+
+        long salesQuantity = orders.salesQuantityByCustomerInYear(customerId, Year.now());
+        assertThat(salesQuantity).isEqualTo(2L);
     }
 }
