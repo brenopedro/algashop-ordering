@@ -62,8 +62,7 @@ public class OrdersPersistenceProvider implements Orders {
 
     @Override
     public List<Order> placedByCustomerInYear(CustomerId customerId, Year year) {
-        OffsetDateTime start = year.atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC);
-        return persistenceRepository.findByCustomer_IdAndPlacedAtBetween(customerId.value(), start, start.plusYears(1).minusNanos(1))
+        return persistenceRepository.placedByCustomerInYear(customerId.value(), year.getValue())
                 .stream().map(disassembler::toDomainEntity).toList();
     }
 
