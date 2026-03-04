@@ -1,22 +1,46 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.assembler;
 
+import com.algaworks.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.entity.Order;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderItem;
 import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
+import com.algaworks.algashop.ordering.infrastructure.persistence.repository.CustomerPersistenceEntityRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class OrderPersistenceEntityAssemblerTest {
 
-    private final OrderPersistenceEntityAssembler assembler = new OrderPersistenceEntityAssembler();
+    @Mock
+    private CustomerPersistenceEntityRepository customerRepository;
+
+    @InjectMocks
+    private OrderPersistenceEntityAssembler assembler;
+
+    @BeforeEach
+    void setup() {
+        when(customerRepository.getReferenceById(any(UUID.class))).then(a -> {
+            UUID id = a.getArgument(0, UUID.class);
+            return CustomerPersistenceEntityTestDataBuilder.aCustomer().id(id).build();
+        });
+    }
 
     @Test
     void shouldConvertToDomain() {
