@@ -22,6 +22,7 @@ public class ErrorMessages {
     public static final String VALIDATION_ERROR_LASTNAME_IS_INVALID = "Lastname is invalid";
 
     public static final String VALIDATION_ERROR_EMAIL_IS_INVALID = "Email is invalid";
+    public static final String VALIDATION_ERROR_EMAIL_IN_USE = "O email %s já está em uso por outro cliente";
 
     public static final String VALIDATION_ERROR_DOCUMENT_IS_INVALID = "Document is invalid";
 

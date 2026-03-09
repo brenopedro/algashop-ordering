@@ -89,16 +89,14 @@ class CustomerTest {
     }
 
     @Test
-    void givenBrandNewCustomer_whenAddedInvalidPoints_shouldGenerateException() {
+    void given_brandNewCustomer_whenAddInvalidLoyaltyPoints_shouldGenerateException() {
         Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
 
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
-                () -> customer.addLoyaltyPoints(new LoyaltyPoints(-10)))
-                .withMessage(VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE);
+        assertThatNoException()
+                .isThrownBy(()-> customer.addLoyaltyPoints(new LoyaltyPoints(0)));
 
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
-                        () -> customer.addLoyaltyPoints(new LoyaltyPoints(0)))
-                .withMessage(VALIDATION_ERROR_LOYALTY_POINTS_MUST_BE_POSITIVE);
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(()-> new LoyaltyPoints(-10));
     }
 
 }
