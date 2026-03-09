@@ -4,6 +4,9 @@ public class ErrorMessages {
 
     private ErrorMessages() {}
 
+    public static final String VALIDATION_ERROR_CUSTOMER_IS_NULL = "Customer must not be null";
+    public static final String VALIDATION_ERROR_ORDER_IS_NULL = "Order must not be null";
+
     public static final String VALIDATION_ERROR_CUSTOMER_ID_IS_INVALID = "CustomerId is invalid";
     public static final String VALIDATION_ERROR_ORDER_ID_IS_INVALID = "OrderId is invalid";
     public static final String VALIDATION_ERROR_ORDER_ITEM_ID_IS_INVALID = "OrderItemId is invalid";
@@ -67,5 +70,9 @@ public class ErrorMessages {
     public static final String ERROR_SHOPPING_CART_DOES_NOT_CONTAIN_ITEM = "ShoppingCart %s does not contain item %s";
     public static final String ERROR_SHOPPING_CART_DOES_NOT_CONTAIN_PRODUCT = "ShoppingCart %s does not contain product %s";
     public static final String ERROR_SHOPPING_CART_ITEM_INCOMPATIBLE_PRODUCT = "ShoppingCartItem %s is incompatible with product %s";
+
+    public static final String ERROR_ORDER_DOES_NOT_BELONGS_TO_CUSTOMER = "Order does not belong to the customer";
+
+    public static final String ERROR_ORDER_IS_NOT_READY_TO_ADD_LOYALTY_POINTS = "Can't add loyalty points to an order that is not ready";
 
 }
