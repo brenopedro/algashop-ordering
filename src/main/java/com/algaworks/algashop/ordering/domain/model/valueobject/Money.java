@@ -25,7 +25,7 @@ public record Money(BigDecimal value) implements Comparable<Money> {
 
     public Money multiply(Quantity quantity) {
         Objects.requireNonNull(quantity, VALIDATION_ERROR_QUANTITY_IS_INVALID);
-        if (quantity.value() < 0) {
+        if (quantity.value() < 1) {
             throw new IllegalArgumentException(VALIDATION_ERROR_QUANTITY_IS_INVALID);
         }
         return new Money(value().multiply(new BigDecimal(quantity.value())));
