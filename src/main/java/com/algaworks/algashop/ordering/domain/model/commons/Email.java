@@ -1,0 +1,17 @@
+package com.algaworks.algashop.ordering.domain.model.commons;
+
+import com.algaworks.algashop.ordering.domain.model.FieldValidator;
+
+import static com.algaworks.algashop.ordering.domain.model.ErrorMessages.VALIDATION_ERROR_EMAIL_IS_INVALID;
+
+public record Email(String value) {
+
+    public Email {
+        FieldValidator.requiresValidEmail(value, VALIDATION_ERROR_EMAIL_IS_INVALID);
+    }
+
+    @Override
+    public String toString() {
+        return value();
+    }
+}
