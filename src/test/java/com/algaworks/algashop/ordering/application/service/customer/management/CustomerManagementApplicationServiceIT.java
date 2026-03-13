@@ -1,8 +1,10 @@
-package com.algaworks.algashop.ordering.application.service;
+package com.algaworks.algashop.ordering.application.service.customer.management;
 
 
-import com.algaworks.algashop.ordering.application.model.AddressData;
-import com.algaworks.algashop.ordering.application.model.CustomerInput;
+import com.algaworks.algashop.ordering.application.customer.management.CustomerManagementApplicationService;
+import com.algaworks.algashop.ordering.application.commons.AddressData;
+import com.algaworks.algashop.ordering.application.customer.management.CustomerInput;
+import com.algaworks.algashop.ordering.application.customer.management.CustomerOutput;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CustomerManagementApplicationServiceIT {
 
     @Autowired
-    private CustomerManagementApplicationService service;
+    private CustomerManagementApplicationService customerManagementApplicationService;
 
     @Test
-    void shouldRegister() {
+    public void shouldRegister() {
         CustomerInput input = CustomerInput.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -39,7 +41,16 @@ class CustomerManagementApplicationServiceIT {
                         .build())
                 .build();
 
-        UUID customerId = service.create(input);
+        UUID customerId = customerManagementApplicationService.create(input);
         assertThat(customerId).isNotNull();
+
+        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+
+        assertThat(customerOutput.getId()).isEqualTo(customerId);
+        assertThat(customerOutput.getFirstName()).isEqualTo("John");
+        assertThat(customerOutput.getLastName()).isEqualTo("Doe");
+        assertThat(customerOutput.getEmail()).isEqualTo("johndoe@email.com");
+        assertThat(customerOutput.getBirthDate()).isEqualTo(LocalDate.of(1991, 7,5));
+        assertThat(customerOutput.getRegisteredAt()).isNotNull();
     }
 }
