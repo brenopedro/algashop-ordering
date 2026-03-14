@@ -67,6 +67,7 @@ public class ErrorMessages {
     public static final String ERROR_ORDER_DOES_NOT_CONTAIN_ORDER_ITEM = "Order %s does not contain order item %s";
 
     public static final String ERROR_PRODUCT_OUT_OF_STOCK = "Product %s is out of stock";
+    public static final String ERROR_PRODUCT_NOT_FOUND = "Product not found";
 
     public static final String ERROR_ORDER_CANNOT_BE_EDITED = "Order %s with status %s cannot be edited";
 
@@ -77,5 +78,4 @@ public class ErrorMessages {
 
     public static final String ERROR_ORDER_DOES_NOT_BELONGS_TO_CUSTOMER = "Order does not belong to the customer";
     public static final String ERROR_ORDER_IS_NOT_READY_TO_ADD_LOYALTY_POINTS = "Can't add loyalty points to an order that is not ready";
-
 }
