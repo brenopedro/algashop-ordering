@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 public class CustomerInputTestDataBuilder {
 
-    public static CustomerInput.CustomerInputBuilder builder() {
+    public static CustomerInput.CustomerInputBuilder aCustomer() {
         return CustomerInput.builder()
                 .firstName("John")
                 .lastName("Doe")
