@@ -78,4 +78,5 @@ public class ErrorMessages {
 
     public static final String ERROR_ORDER_DOES_NOT_BELONGS_TO_CUSTOMER = "Order does not belong to the customer";
     public static final String ERROR_ORDER_IS_NOT_READY_TO_ADD_LOYALTY_POINTS = "Can't add loyalty points to an order that is not ready";
+    public static final String ERROR_ORDER_NOT_FOUND =  "Order not found";
 }

@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CustomerLoyaltyPointServiceTest {
 
-    CustomerLoyaltyPointService customerLoyaltyPointService = new CustomerLoyaltyPointService();
+    CustomerLoyaltyPointsService customerLoyaltyPointService = new CustomerLoyaltyPointsService();
 
     @Test
     void givenValidCustomerAndOrder_whenAddingPoints_ShouldAccumulate() {

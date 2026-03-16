@@ -11,7 +11,7 @@ import static com.algaworks.algashop.ordering.domain.model.ErrorMessages.VALIDAT
 import static com.algaworks.algashop.ordering.domain.model.ErrorMessages.VALIDATION_ERROR_ORDER_IS_NULL;
 
 @DomainService
-public class CustomerLoyaltyPointService {
+public class CustomerLoyaltyPointsService {
 
     private static final LoyaltyPoints basePoints = new LoyaltyPoints(5);
     private static  final Money expectedAmountToGivePoints = new Money("1000");
