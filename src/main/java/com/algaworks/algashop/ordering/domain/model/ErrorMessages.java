@@ -51,7 +51,7 @@ public class ErrorMessages {
 
     public static final String VALIDATION_ERROR_PRODUCT_NAME_IS_INVALID = "Product name is invalid";
 
-    public static final String ERROR_CUSTOMER_ARCHIVED = "Customer is already archived";
+    public static final String ERROR_CUSTOMER_ARCHIVED = "Customer is archived";
     public static final String ERROR_CUSTOMER_DOES_NOT_EXIST = "Customer does not exist";
     public static final String ERROR_CUSTOMER_ALREADY_HAVE_ACTIVE_CART = "Customer already have a active shopping cart";
 

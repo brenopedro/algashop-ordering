@@ -25,10 +25,7 @@ public class FieldValidator {
     }
 
     public static void requiresValidEmail(String email, String errorMessage) {
-        Objects.requireNonNull(email, errorMessage);
-        if (email.isBlank()) {
-            throw new IllegalArgumentException(errorMessage);
-        }
+        requiresNonBlank(email, errorMessage);
         if (!EmailValidator.getInstance().isValid(email)) {
             throw new IllegalArgumentException(errorMessage);
         }
