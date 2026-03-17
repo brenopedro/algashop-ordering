@@ -6,10 +6,12 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.UUID;
 
 
@@ -20,10 +22,10 @@ import java.util.UUID;
 @Builder
 @ToString(of = "id")
 @EntityListeners(AuditingEntityListener.class)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerPersistenceEntity {
+public class CustomerPersistenceEntity extends AbstractAggregateRoot<CustomerPersistenceEntity> {
 
     @Id
     @EqualsAndHashCode.Include
@@ -63,4 +65,16 @@ public class CustomerPersistenceEntity {
 
     @LastModifiedDate
     private OffsetDateTime lastModifiedAt;
+
+    public Collection<Object> getEvents() {
+        return super.domainEvents();
+    }
+
+    public void addEvent(Collection<Object> events) {
+        if (events != null) {
+            for (Object event : events) {
+                this.registerEvent(event);
+            }
+        }
+    }
 }
