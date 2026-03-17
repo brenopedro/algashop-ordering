@@ -98,4 +98,11 @@ class CustomerTest {
                 .isThrownBy(()-> new LoyaltyPoints(-10));
     }
 
+    @Test
+    void givenValidData_whenCreateBrandNewCustomer_shouldGenerateCustomerRegisteredEvent() {
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
+        CustomerRegisteredEvent customerRegisteredEvent = new CustomerRegisteredEvent(customer.id(), customer.registeredAt());
+        assertThat(customer.domainEvents()).contains(customerRegisteredEvent);
+    }
+
 }
