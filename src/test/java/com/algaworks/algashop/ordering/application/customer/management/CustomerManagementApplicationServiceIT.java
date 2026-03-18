@@ -1,12 +1,16 @@
 package com.algaworks.algashop.ordering.application.customer.management;
 
 
+import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationService;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerArchivedException;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerEmailIsInUseException;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerRegisteredEvent;
+import com.algaworks.algashop.ordering.infrastructure.listener.customer.CustomerEventListener;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -14,6 +18,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @Transactional
@@ -21,6 +27,12 @@ class CustomerManagementApplicationServiceIT {
 
     @Autowired
     private CustomerManagementApplicationService customerManagementApplicationService;
+
+    @MockitoSpyBean
+    CustomerEventListener customerEventListener;
+
+    @MockitoSpyBean
+    CustomerNotificationService customerNotificationService;
 
     @Test
     void shouldRegister() {
@@ -46,6 +58,10 @@ class CustomerManagementApplicationServiceIT {
         );
 
         assertThat(customerOutput.getRegisteredAt()).isNotNull();
+
+        verify(customerEventListener).listen(any(CustomerRegisteredEvent.class));
+        verify(customerNotificationService).notifyNewRegistration(any(
+                CustomerNotificationService.NotifyNewRegistrationInput.class));
     }
 
     @Test
