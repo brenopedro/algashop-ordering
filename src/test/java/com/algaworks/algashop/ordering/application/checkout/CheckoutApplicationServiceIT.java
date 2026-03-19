@@ -10,11 +10,13 @@ import com.algaworks.algashop.ordering.domain.model.order.shipping.ShippingCostS
 import com.algaworks.algashop.ordering.domain.model.product.Product;
 import com.algaworks.algashop.ordering.domain.model.product.ProductTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.*;
+import com.algaworks.algashop.ordering.infrastructure.listener.order.OrderEventListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -25,6 +27,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -51,6 +54,9 @@ class CheckoutApplicationServiceIT {
 
     @MockitoBean
     private ShippingCostService shippingCostService;
+
+    @MockitoSpyBean
+    OrderEventListener orderEventListener;
 
     @BeforeEach
     public void setup() {
@@ -91,6 +97,7 @@ class CheckoutApplicationServiceIT {
         Optional<ShoppingCart> updatedCart = shoppingCarts.ofId(shoppingCart.id());
         assertThat(updatedCart).isPresent();
         assertThat(updatedCart.get().isEmpty()).isTrue();
+        verify(orderEventListener).listen(any(OrderPlacedEvent.class));
     }
 
     @Test

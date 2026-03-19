@@ -4,14 +4,18 @@ import com.algaworks.algashop.ordering.domain.model.customer.Customer;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.domain.model.customer.Customers;
 import com.algaworks.algashop.ordering.domain.model.order.*;
+import com.algaworks.algashop.ordering.infrastructure.listener.order.OrderEventListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @Transactional
@@ -25,6 +29,9 @@ class OrderManagementApplicationServiceIT {
 
     @Autowired
     Customers customers;
+
+    @MockitoSpyBean
+    OrderEventListener orderEventListener;
 
     Customer customer;
     Order order;
@@ -48,6 +55,7 @@ class OrderManagementApplicationServiceIT {
         Order orderSaved = orders.ofId(order.id()).orElseThrow();
 
         assertThat(orderSaved.isCanceled()).isTrue();
+        verify(orderEventListener).listen(any(OrderCanceledEvent.class));
     }
 
     @Test
@@ -73,6 +81,7 @@ class OrderManagementApplicationServiceIT {
         Order orderSaved = orders.ofId(order.id()).orElseThrow();
 
         assertThat(orderSaved.isPaid()).isTrue();
+        verify(orderEventListener).listen(any(OrderPaidEvent.class));
     }
 
     @Test
@@ -99,6 +108,7 @@ class OrderManagementApplicationServiceIT {
         Order orderSaved = orders.ofId(order.id()).orElseThrow();
 
         assertThat(orderSaved.isReady()).isTrue();
+        verify(orderEventListener).listen(any(OrderReadyEvent.class));
     }
 
     @Test
