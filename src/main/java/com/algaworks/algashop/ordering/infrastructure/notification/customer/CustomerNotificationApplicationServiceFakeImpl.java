@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.infrastructure.notification.customer;
 
-import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationService;
+import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CustomerNotificationServiceFakeImpl implements CustomerNotificationService {
+public class CustomerNotificationApplicationServiceFakeImpl implements CustomerNotificationApplicationService {
 
     @Override
     public void notifyNewRegistration(NotifyNewRegistrationInput input) {

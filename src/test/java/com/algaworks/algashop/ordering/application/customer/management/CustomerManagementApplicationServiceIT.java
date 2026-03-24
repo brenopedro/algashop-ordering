@@ -1,7 +1,7 @@
 package com.algaworks.algashop.ordering.application.customer.management;
 
 
-import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationService;
+import com.algaworks.algashop.ordering.application.customer.notification.CustomerNotificationApplicationService;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerArchivedException;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerEmailIsInUseException;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
@@ -32,7 +32,7 @@ class CustomerManagementApplicationServiceIT {
     CustomerEventListener customerEventListener;
 
     @MockitoSpyBean
-    CustomerNotificationService customerNotificationService;
+    CustomerNotificationApplicationService customerNotificationApplicationService;
 
     @Test
     void shouldRegister() {
@@ -60,8 +60,8 @@ class CustomerManagementApplicationServiceIT {
         assertThat(customerOutput.getRegisteredAt()).isNotNull();
 
         verify(customerEventListener).listen(any(CustomerRegisteredEvent.class));
-        verify(customerNotificationService).notifyNewRegistration(any(
-                CustomerNotificationService.NotifyNewRegistrationInput.class));
+        verify(customerNotificationApplicationService).notifyNewRegistration(any(
+                CustomerNotificationApplicationService.NotifyNewRegistrationInput.class));
     }
 
     @Test
