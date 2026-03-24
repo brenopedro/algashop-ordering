@@ -7,10 +7,11 @@ import com.algaworks.algashop.ordering.domain.model.customer.*;
 import com.algaworks.algashop.ordering.domain.model.order.*;
 import com.algaworks.algashop.ordering.domain.model.product.Product;
 import com.algaworks.algashop.ordering.domain.model.product.ProductTestDataBuilder;
-import org.junit.jupiter.api.BeforeEach;
+import com.algaworks.algashop.ordering.infrastructure.listener.customer.CustomerEventListener;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
@@ -31,10 +32,8 @@ class CustomerLoyaltyPointsApplicationServiceIT {
     @Autowired
     Orders orders;
 
-    @BeforeEach
-    void setUp() {
-
-    }
+    @MockitoBean
+    CustomerEventListener customerEventListener;
 
 
     @Test
