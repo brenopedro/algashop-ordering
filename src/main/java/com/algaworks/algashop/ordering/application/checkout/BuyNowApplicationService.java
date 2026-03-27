@@ -2,7 +2,10 @@ package com.algaworks.algashop.ordering.application.checkout;
 
 import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
 import com.algaworks.algashop.ordering.domain.model.commons.ZipCode;
+import com.algaworks.algashop.ordering.domain.model.customer.Customer;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerId;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
+import com.algaworks.algashop.ordering.domain.model.customer.Customers;
 import com.algaworks.algashop.ordering.domain.model.order.*;
 import com.algaworks.algashop.ordering.domain.model.order.shipping.OriginAddressService;
 import com.algaworks.algashop.ordering.domain.model.order.shipping.ShippingCostService;
@@ -27,6 +30,7 @@ public class BuyNowApplicationService {
     private final OriginAddressService originAddressService;
 
     private final Orders orders;
+    private final Customers customers;
 
     private final ShippingInputDisassembler shippingInputDisassembler;
     private final BillingInputDisassembler billingInputDisassembler;
@@ -40,6 +44,7 @@ public class BuyNowApplicationService {
         Quantity quantity = new Quantity(input.getQuantity());
 
         Product product = findProduct(new ProductId(input.getProductId()));
+        Customer customer = customers.ofId(customerId).orElseThrow(CustomerNotFoundException::new);
 
         var shippingCalculationResult = calculateShippingCost(input.getShipping());
 
@@ -47,7 +52,7 @@ public class BuyNowApplicationService {
 
         Billing billing = billingInputDisassembler.toDomainModel(input.getBilling());
 
-        Order order = buyNowService.buyNow(product, customerId, billing, shipping, quantity, paymentMethod);
+        Order order = buyNowService.buyNow(product, customer, billing, shipping, quantity, paymentMethod);
 
         orders.add(order);
 
