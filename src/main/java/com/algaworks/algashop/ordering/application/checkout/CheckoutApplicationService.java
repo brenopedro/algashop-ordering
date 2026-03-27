@@ -1,6 +1,9 @@
 package com.algaworks.algashop.ordering.application.checkout;
 
 import com.algaworks.algashop.ordering.domain.model.commons.ZipCode;
+import com.algaworks.algashop.ordering.domain.model.customer.Customer;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
+import com.algaworks.algashop.ordering.domain.model.customer.Customers;
 import com.algaworks.algashop.ordering.domain.model.order.*;
 import com.algaworks.algashop.ordering.domain.model.order.shipping.OriginAddressService;
 import com.algaworks.algashop.ordering.domain.model.order.shipping.ShippingCostService;
@@ -15,6 +18,8 @@ import java.util.Objects;
 public class CheckoutApplicationService {
 
     private final ShoppingCarts shoppingCarts;
+    private final Orders orders;
+    private final Customers customers;
 
     private final ShippingCostService shippingCostService;
     private final OriginAddressService  originAddressService;
@@ -22,7 +27,7 @@ public class CheckoutApplicationService {
 
     private final BillingInputDisassembler billingInputDisassembler;
     private final ShippingInputDisassembler shippingInputDisassembler;
-    private final Orders orders;
+
 
     public String checkout(CheckoutInput input) {
         Objects.requireNonNull(input);
@@ -31,9 +36,11 @@ public class CheckoutApplicationService {
         ShoppingCart shoppingCart = shoppingCarts.ofId(new ShoppingCartId(input.getShoppingCartId()))
                 .orElseThrow(ShoppingCartNotFoundException::new);
 
+        Customer customer = customers.ofId(shoppingCart.customerId()).orElseThrow(CustomerNotFoundException::new);
+
         ShippingCostService.CalculationResult calculationResult = calculateShippingCost(input.getShipping());
 
-        Order order = checkoutService.checkout(shoppingCart,
+        Order order = checkoutService.checkout(customer, shoppingCart,
                 billingInputDisassembler.toDomainModel(input.getBilling()),
                 shippingInputDisassembler.toDomainModel(input.getShipping(), calculationResult),
                 paymentMethod);

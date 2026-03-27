@@ -33,9 +33,9 @@ class BuyNowServiceTest {
     @BeforeEach
     void setUp() {
         CustomerHaveFreeShippingSpecification customerHaveFreeShippingSpecification = new CustomerHaveFreeShippingSpecification(orders,
-                100,
+                new LoyaltyPoints(100),
                 2,
-                2000);
+                new LoyaltyPoints(2000));
 
         buyNowService = new BuyNowService(customerHaveFreeShippingSpecification);
     }
