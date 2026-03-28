@@ -20,13 +20,13 @@ public class CustomerOutput {
     private String firstName;
     private String lastName;
     private String email;
-    private String phone;
     private String document;
+    private String phone;
     private LocalDate birthDate;
-    private Boolean promotionNotificationsAllowed;
-    private Boolean archived;
     private Integer loyaltyPoints;
     private OffsetDateTime registeredAt;
     private OffsetDateTime archivedAt;
+    private Boolean promotionNotificationsAllowed;
+    private Boolean archived;
     private AddressData address;
 }

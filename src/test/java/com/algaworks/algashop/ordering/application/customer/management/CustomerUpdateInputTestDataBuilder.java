@@ -2,9 +2,9 @@ package com.algaworks.algashop.ordering.application.customer.management;
 
 import com.algaworks.algashop.ordering.application.commons.AddressData;
 
-public class CustomerUpdateInputTestDateBuilder {
+public class CustomerUpdateInputTestDataBuilder {
 
-    public static CustomerUpdateInput.CustomerUpdateInputBuilder builder() {
+    public static CustomerUpdateInput.CustomerUpdateInputBuilder aCustomerUpdate() {
         return CustomerUpdateInput.builder()
                 .firstName("Matt")
                 .lastName("Damon")
