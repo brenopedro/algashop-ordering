@@ -1,0 +1,32 @@
+package com.algaworks.algashop.ordering.infrastructure.persistence.shoppingcart;
+
+import com.algaworks.algashop.ordering.application.shoppingcart.query.ShoppingCartOutput;
+import com.algaworks.algashop.ordering.application.shoppingcart.query.ShoppingCartQueryService;
+import com.algaworks.algashop.ordering.application.utility.Mapper;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCartNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+
+@Component
+@RequiredArgsConstructor
+public class ShoppingCartQueryServiceImpl implements ShoppingCartQueryService {
+
+    private final ShoppingCartPersistenceEntityRepository repository;
+    private final Mapper mapper;
+
+    @Override
+    public ShoppingCartOutput findById(UUID shoppingCartId) {
+        ShoppingCartPersistenceEntity entity = repository.findById(shoppingCartId)
+                .orElseThrow(ShoppingCartNotFoundException::new);
+        return mapper.convert(entity, ShoppingCartOutput.class);
+    }
+
+    @Override
+    public ShoppingCartOutput findByCustomerId(UUID customerId) {
+        ShoppingCartPersistenceEntity entity = repository
+                .findByCustomer_Id(customerId).orElseThrow(ShoppingCartNotFoundException::new);
+        return mapper.convert(entity, ShoppingCartOutput.class);
+    }
+}
