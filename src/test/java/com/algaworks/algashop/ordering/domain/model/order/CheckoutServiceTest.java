@@ -29,7 +29,8 @@ class CheckoutServiceTest {
 
     @BeforeEach
     void setUp() {
-        CustomerHaveFreeShippingSpecification customerHaveFreeShippingSpecification = new CustomerHaveFreeShippingSpecification(orders,
+        CustomerHaveFreeShippingSpecification customerHaveFreeShippingSpecification = new CustomerHaveFreeShippingSpecification(
+                orders,
                 new LoyaltyPoints(100),
                 2,
                 new LoyaltyPoints(2000));
@@ -43,7 +44,6 @@ class CheckoutServiceTest {
         ShoppingCart shoppingCart = ShoppingCart.startShopping(customer.id());
         shoppingCart.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
         shoppingCart.addItem(ProductTestDataBuilder.aProductAltRamMemory().build(), new Quantity(1));
-
 
         Billing billingInfo = OrderTestDataBuilder.aBilling();
         Shipping shippingInfo = OrderTestDataBuilder.aShipping();
@@ -89,7 +89,8 @@ class CheckoutServiceTest {
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
 
         assertThatExceptionOfType(ShoppingCartCantProceedToCheckoutException.class)
-                .isThrownBy(() -> checkoutService.checkout(customer, shoppingCart, billingInfo, shippingInfo, paymentMethod));
+                .isThrownBy(() -> checkoutService.checkout(customer, shoppingCart, billingInfo, shippingInfo,
+                        paymentMethod));
 
         assertThat(shoppingCart.isEmpty()).isFalse();
         assertThat(shoppingCart.items()).hasSize(1);
@@ -105,7 +106,8 @@ class CheckoutServiceTest {
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
 
         assertThatExceptionOfType(ShoppingCartCantProceedToCheckoutException.class)
-                .isThrownBy(() -> checkoutService.checkout(customer, shoppingCart, billingInfo, shippingInfo, paymentMethod));
+                .isThrownBy(() -> checkoutService.checkout(customer, shoppingCart, billingInfo, shippingInfo,
+                        paymentMethod));
 
         assertThat(shoppingCart.isEmpty()).isTrue();
     }
@@ -117,13 +119,11 @@ class CheckoutServiceTest {
         Product productInStock = ProductTestDataBuilder.aProduct().build();
         shoppingCart.addItem(productInStock, new Quantity(2));
 
-        Money initialTotalAmount = shoppingCart.totalAmount();
-        Quantity initialTotalItems = shoppingCart.totalItems();
-
         Product productAlt = ProductTestDataBuilder.aProductAltRamMemory().build();
         shoppingCart.addItem(productAlt, new Quantity(1));
 
-        Product productAltUnavailable = ProductTestDataBuilder.aProductAltRamMemory().id(productAlt.id()).inStock(false).build();
+        Product productAltUnavailable = ProductTestDataBuilder.aProductAltRamMemory().id(productAlt.id()).inStock(false)
+                .build();
         shoppingCart.refreshItem(productAltUnavailable);
 
         Billing billingInfo = OrderTestDataBuilder.aBilling();
@@ -131,7 +131,8 @@ class CheckoutServiceTest {
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
 
         assertThatExceptionOfType(ShoppingCartCantProceedToCheckoutException.class)
-                .isThrownBy(() -> checkoutService.checkout(customer, shoppingCart, billingInfo, shippingInfo, paymentMethod));
+                .isThrownBy(() -> checkoutService.checkout(customer, shoppingCart, billingInfo, shippingInfo,
+                        paymentMethod));
 
         assertThat(shoppingCart.isEmpty()).isFalse();
 
@@ -148,7 +149,6 @@ class CheckoutServiceTest {
         ShoppingCart shoppingCart = ShoppingCart.startShopping(customer.id());
         shoppingCart.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
         shoppingCart.addItem(ProductTestDataBuilder.aProductAltRamMemory().build(), new Quantity(1));
-
 
         Billing billingInfo = OrderTestDataBuilder.aBilling();
         Shipping shippingInfo = OrderTestDataBuilder.aShipping();
