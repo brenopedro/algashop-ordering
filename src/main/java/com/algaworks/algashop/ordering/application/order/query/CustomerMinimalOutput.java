@@ -17,6 +17,6 @@ public class CustomerMinimalOutput {
     private String firstName;
     private String lastName;
     private String email;
-    private String Document;
+    private String document;
     private String phone;
 }
