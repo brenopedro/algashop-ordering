@@ -5,11 +5,13 @@ import com.algaworks.algashop.ordering.application.shoppingcart.query.ShoppingCa
 import com.algaworks.algashop.ordering.application.utility.Mapper;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCartNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-@Component
+@Service
+@Transactional
 @RequiredArgsConstructor
 public class ShoppingCartQueryServiceImpl implements ShoppingCartQueryService {
 
