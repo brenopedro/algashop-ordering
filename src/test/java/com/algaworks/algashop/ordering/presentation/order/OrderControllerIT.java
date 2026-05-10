@@ -63,16 +63,16 @@ class OrderControllerIT {
         String json = AlgaShopResourceUtils.readContent("json/create-order-with-product.json");
         String createOrderId = RestAssured
                 .given()
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType("application/vnd.order-with-product.v1+json")
-                .body(json)
+                    .accept(MediaType.APPLICATION_JSON_VALUE)
+                    .contentType("application/vnd.order-with-product.v1+json")
+                    .body(json)
                 .when()
-                .post("/api/v1/orders")
+                    .post("/api/v1/orders")
                 .then()
                 .assertThat()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .statusCode(HttpStatus.CREATED.value())
-                .body("id", Matchers.not(Matchers.emptyString()),
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .statusCode(HttpStatus.CREATED.value())
+                    .body("id", Matchers.not(Matchers.emptyString()),
                         "customer.id", Matchers.is(VALID_CUSTOMER_ID.toString()))
                 .extract().jsonPath().get("id");
 
