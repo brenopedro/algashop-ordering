@@ -18,6 +18,7 @@ public class ProductCatalogServiceImpl implements ProductCatalogService {
                 .id(productId)
                 .name(new ProductName("Notebook"))
                 .price(new Money("3000"))
+                .inStock(true)
                 .build();
         return Optional.of(product);
     }
