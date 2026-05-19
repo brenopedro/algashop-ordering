@@ -5,9 +5,11 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.customer.Custo
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.utils.AlgaShopResourceUtils;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import io.restassured.RestAssured;
 import io.restassured.path.json.config.JsonPathConfig;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static io.restassured.config.JsonConfig.jsonConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,6 +39,9 @@ class OrderControllerIT {
     private static boolean databaseInitialized;
     private static final UUID VALID_CUSTOMER_ID = UUID.fromString("6e148bd5-47f6-4022-b9da-07cfaa294f7a");
 
+    private WireMockServer wireMockProductCatalog;
+    private WireMockServer wireMockRapidex;
+
     @BeforeEach
     void setUp() {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
@@ -45,6 +51,24 @@ class OrderControllerIT {
                 .numberReturnType(JsonPathConfig.NumberReturnType.BIG_DECIMAL));
 
         initDatabase();
+
+        wireMockProductCatalog = new WireMockServer(
+                options()
+                        .port(8781)
+                        .usingFilesUnderDirectory("src/test/resources/wiremock/product-catalog"));
+
+        wireMockRapidex = new WireMockServer(
+                options()
+                        .port(8780)
+                        .usingFilesUnderDirectory("src/test/resources/wiremock/rapidex"));
+        wireMockProductCatalog.start();
+        wireMockRapidex.start();
+    }
+
+    @AfterEach
+    void afterEach() {
+        wireMockProductCatalog.stop();
+        wireMockRapidex.stop();
     }
 
     private void initDatabase() {
