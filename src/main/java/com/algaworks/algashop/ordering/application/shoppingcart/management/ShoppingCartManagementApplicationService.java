@@ -27,11 +27,14 @@ public class ShoppingCartManagementApplicationService {
     public void addItem(ShoppingCartItemInput input) {
         Objects.requireNonNull(input);
 
-        ShoppingCart shoppingCart = shoppingCarts.ofId(new ShoppingCartId(input.getShoppingCartId()))
-                .orElseThrow(ShoppingCartNotFoundException::new);
+        ProductId productId = new ProductId(input.getProductId());
+        ShoppingCartId shoppingCartId = new ShoppingCartId(input.getShoppingCartId());
 
-        Product product = productCatalogService.ofId(new ProductId(input.getProductId()))
-                .orElseThrow(ProductNotFoundException::new);
+        ShoppingCart shoppingCart = shoppingCarts.ofId(shoppingCartId)
+                .orElseThrow(() -> new ShoppingCartNotFoundException(shoppingCartId));
+
+        Product product = productCatalogService.ofId(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
 
         shoppingCart.addItem(product, new Quantity(input.getQuantity()));
         shoppingCarts.add(shoppingCart);

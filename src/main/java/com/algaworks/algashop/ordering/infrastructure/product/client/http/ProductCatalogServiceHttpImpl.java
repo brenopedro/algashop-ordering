@@ -27,6 +27,8 @@ public class ProductCatalogServiceHttpImpl implements ProductCatalogService {
             productResponse  = productCatalogAPIClient.getById(productId.value());
         } catch (ResourceAccessException ex) {
             throw new GatewayTimeoutException("Product Catalog API Gateway Timeout", ex);
+        } catch (HttpClientErrorException.NotFound ex) {
+            return Optional.empty();
         } catch (HttpClientErrorException ex) {
             throw new BadGatewayException("Product Catalog API Bad Gateway", ex);
         }

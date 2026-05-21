@@ -53,7 +53,7 @@ public class ErrorMessages {
 
     public static final String ERROR_CUSTOMER_ARCHIVED = "Customer is archived";
     public static final String ERROR_CUSTOMER_NOT_FOUND = "Customer %s not found";
-    public static final String ERROR_CUSTOMER_ALREADY_HAVE_ACTIVE_CART = "Customer already have a active shopping cart";
+    public static final String ERROR_CUSTOMER_ALREADY_HAVE_ACTIVE_CART = "Customer %s already have a active shopping cart";
 
     public static final String ERROR_ORDER_STATUS_CANNOT_BE_CHANGED = "Order %s cannot change status from %s to %s";
 
@@ -75,7 +75,7 @@ public class ErrorMessages {
     public static final String ERROR_SHOPPING_CART_DOES_NOT_CONTAIN_PRODUCT = "ShoppingCart %s does not contain product %s";
     public static final String ERROR_SHOPPING_CART_ITEM_INCOMPATIBLE_PRODUCT = "ShoppingCartItem %s is incompatible with product %s";
     public static final String ERROR_SHOPPING_CART_DOES_NOT_CONTAIN_VALID_ITEMS = "Shopping cart is empty or contains unavailable items";
-    public static final String ERROR_SHOPPING_CART_NOT_FOUND = "ShoppingCart not found";
+    public static final String ERROR_SHOPPING_CART_NOT_FOUND = "ShoppingCart %s not found";
 
     public static final String ERROR_ORDER_DOES_NOT_BELONGS_TO_CUSTOMER = "Order does not belong to the customer";
     public static final String ERROR_ORDER_IS_NOT_READY_TO_ADD_LOYALTY_POINTS = "Can't add loyalty points to an order that is not ready";

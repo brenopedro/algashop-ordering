@@ -5,7 +5,9 @@ import com.algaworks.algashop.ordering.domain.model.DomainEntityNotFoundExceptio
 import static com.algaworks.algashop.ordering.domain.model.ErrorMessages.ERROR_SHOPPING_CART_NOT_FOUND;
 
 public class ShoppingCartNotFoundException extends DomainEntityNotFoundException {
-    public ShoppingCartNotFoundException() {
-        super(ERROR_SHOPPING_CART_NOT_FOUND);
+    public ShoppingCartNotFoundException() {}
+
+    public ShoppingCartNotFoundException(ShoppingCartId shoppingCartId) {
+        super(String.format(ERROR_SHOPPING_CART_NOT_FOUND, shoppingCartId));
     }
 }

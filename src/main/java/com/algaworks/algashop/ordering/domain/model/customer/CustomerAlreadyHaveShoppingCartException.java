@@ -6,7 +6,7 @@ import static com.algaworks.algashop.ordering.domain.model.ErrorMessages.ERROR_C
 
 public class CustomerAlreadyHaveShoppingCartException extends DomainException {
 
-    public CustomerAlreadyHaveShoppingCartException() {
-        super(ERROR_CUSTOMER_ALREADY_HAVE_ACTIVE_CART);
+    public CustomerAlreadyHaveShoppingCartException(CustomerId customerId) {
+        super(String.format(ERROR_CUSTOMER_ALREADY_HAVE_ACTIVE_CART, customerId));
     }
 }
