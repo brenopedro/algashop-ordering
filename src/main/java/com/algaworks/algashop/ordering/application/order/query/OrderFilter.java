@@ -39,7 +39,7 @@ public class OrderFilter extends SortablePageFilter<OrderFilter.SortType> {
     @Getter
     @RequiredArgsConstructor
     public enum SortType {
-        PLACE_AT("placeAt"),
+        PLACE_AT("placedAt"),
         PAID_AT("paidAt"),
         CANCELED_AT("canceledAt"),
         READY_AT("readyAt"),
