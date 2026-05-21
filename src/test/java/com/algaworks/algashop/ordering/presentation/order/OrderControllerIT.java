@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.UUID;
 
@@ -25,6 +26,7 @@ import static io.restassured.config.JsonConfig.jsonConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class OrderControllerIT {
 
     @LocalServerPort
@@ -36,7 +38,6 @@ class OrderControllerIT {
     @Autowired
     private OrderPersistenceEntityRepository orderRepository;
 
-    private static boolean databaseInitialized;
     private static final UUID VALID_CUSTOMER_ID = UUID.fromString("6e148bd5-47f6-4022-b9da-07cfaa294f7a");
 
     private WireMockServer wireMockProductCatalog;
@@ -72,14 +73,9 @@ class OrderControllerIT {
     }
 
     private void initDatabase() {
-        if (databaseInitialized) {
-            return;
-        }
-
         customerRepository.saveAndFlush(
                 CustomerPersistenceEntityTestDataBuilder.aCustomer().id(VALID_CUSTOMER_ID).build()
         );
-        databaseInitialized = true;
     }
 
     @Test
