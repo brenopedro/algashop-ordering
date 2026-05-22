@@ -1,9 +1,12 @@
 package com.algaworks.algashop.ordering.presentation.order;
 
 import com.algaworks.algashop.ordering.domain.model.order.OrderId;
+import com.algaworks.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
+import com.algaworks.algashop.ordering.infrastructure.persistence.entity.ShoppingCartPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityRepository;
+import com.algaworks.algashop.ordering.infrastructure.persistence.shoppingcart.ShoppingCartPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.utils.AlgaShopResourceUtils;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.restassured.RestAssured;
@@ -38,7 +41,11 @@ class OrderControllerIT {
     @Autowired
     private OrderPersistenceEntityRepository orderRepository;
 
+    @Autowired
+    private ShoppingCartPersistenceEntityRepository shoppingCartRepository;
+
     private static final UUID VALID_CUSTOMER_ID = UUID.fromString("6e148bd5-47f6-4022-b9da-07cfaa294f7a");
+    private static final UUID VALID_SHOPPING_CART_ID = UUID.fromString("28fcd9fb-4ce7-44d6-9583-14d8b3dc5aff");
 
     private WireMockServer wireMockProductCatalog;
     private WireMockServer wireMockRapidex;
@@ -73,8 +80,13 @@ class OrderControllerIT {
     }
 
     private void initDatabase() {
-        customerRepository.saveAndFlush(
-                CustomerPersistenceEntityTestDataBuilder.aCustomer().id(VALID_CUSTOMER_ID).build()
+        CustomerPersistenceEntity customer = CustomerPersistenceEntityTestDataBuilder.aCustomer().id(VALID_CUSTOMER_ID).build();
+        customerRepository.saveAndFlush(customer);
+        shoppingCartRepository.saveAndFlush(
+                ShoppingCartPersistenceEntityTestDataBuilder.existingShoppingCart()
+                        .id(VALID_SHOPPING_CART_ID)
+                        .customer(customer)
+                        .build()
         );
     }
 
@@ -150,5 +162,27 @@ class OrderControllerIT {
                     .assertThat()
                     .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
                     .statusCode(HttpStatus.UNPROCESSABLE_CONTENT.value());
+    }
+
+    @Test
+    void shouldCreateOrderUsingShoppingCart() {
+        String json = AlgaShopResourceUtils.readContent("json/create-order-with-shopping-cart.json");
+        String createOrderId = RestAssured
+                .given()
+                    .accept(MediaType.APPLICATION_JSON_VALUE)
+                    .contentType("application/vnd.order-with-shopping-cart.v1+json")
+                    .body(json)
+                .when()
+                    .post("/api/v1/orders")
+                .then()
+                    .assertThat()
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .statusCode(HttpStatus.CREATED.value())
+                    .body("id", Matchers.not(Matchers.emptyString()),
+                            "customer.id", Matchers.is(VALID_CUSTOMER_ID.toString()))
+                    .extract().jsonPath().get("id");
+
+        boolean orderExists = orderRepository.existsById(new OrderId(createOrderId).value().toLong());
+        assertThat(orderExists).isTrue();
     }
 }
