@@ -115,3 +115,15 @@ tasks.register('integrationTest', Test) {
 
     jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}"
 }
+
+bootJar {
+    archiveFileName = 'ordering.jar'
+}
+
+tasks.register('dockerBuild', Exec) {
+    description = 'Builds a multi-platform Docker image using Buildx'
+    group = 'build'
+    dependsOn('build')
+    workingDir project.rootDir
+    commandLine 'docker', 'buildx', 'build', '--platform', 'linux/amd64,linux/arm64/v8', '--tag', 'algashop/ordering:dev', '.'
+}
