@@ -30,6 +30,7 @@ public class OrderPersistenceEntityDisassembler {
                 .readyAt(persistenceEntity.getReadyAt())
                 .version(persistenceEntity.getVersion())
                 .items(toDomainEntity(persistenceEntity.getItems()))
+                .creditCardId(persistenceEntity.getCreditCardId() != null ? new CreditCardId(persistenceEntity.getCreditCardId()) : null)
                 .build();
     }
 

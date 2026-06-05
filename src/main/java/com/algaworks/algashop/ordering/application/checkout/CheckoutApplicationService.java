@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.application.checkout;
 
+import com.algaworks.algashop.ordering.domain.model.DomainException;
 import com.algaworks.algashop.ordering.domain.model.commons.ZipCode;
 import com.algaworks.algashop.ordering.domain.model.customer.Customer;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
@@ -32,6 +33,12 @@ public class CheckoutApplicationService {
     public String checkout(CheckoutInput input) {
         Objects.requireNonNull(input);
         PaymentMethod paymentMethod = PaymentMethod.valueOf(input.getPaymentMethod());
+        CreditCardId creditCardId = null;
+
+        if (paymentMethod.equals(PaymentMethod.CREDIT_CARD)) {
+            if (input.getCreditCardId() == null) throw new DomainException("Credit card id is required");
+            creditCardId = new CreditCardId(input.getCreditCardId());
+        }
 
         ShoppingCart shoppingCart = shoppingCarts.ofId(new ShoppingCartId(input.getShoppingCartId()))
                 .orElseThrow(ShoppingCartNotFoundException::new);
@@ -43,7 +50,7 @@ public class CheckoutApplicationService {
         Order order = checkoutService.checkout(customer, shoppingCart,
                 billingInputDisassembler.toDomainModel(input.getBilling()),
                 shippingInputDisassembler.toDomainModel(input.getShipping(), calculationResult),
-                paymentMethod);
+                paymentMethod, creditCardId);
         orders.add(order);
         shoppingCarts.add(shoppingCart);
 

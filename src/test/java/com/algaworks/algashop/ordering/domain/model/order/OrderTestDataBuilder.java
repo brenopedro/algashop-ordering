@@ -21,6 +21,8 @@ public class OrderTestDataBuilder {
 
     private OrderStatus status = OrderStatus.DRAFT;
 
+    private CreditCardId creditCardId;
+
     private OrderTestDataBuilder() {
 
     }
@@ -33,7 +35,7 @@ public class OrderTestDataBuilder {
         Order order = Order.draft(customerId);
         order.changeShipping(shipping);
         order.changeBilling(billing);
-        order.changePaymentMethod(paymentMethod);
+        order.changePaymentMethod(paymentMethod, creditCardId);
 
         if (withItems) {
             order.addItem(ProductTestDataBuilder.aProduct().build(),
@@ -48,9 +50,7 @@ public class OrderTestDataBuilder {
         switch (this.status) {
             case DRAFT -> {
             }
-            case PLACED -> {
-                order.place();
-            }
+            case PLACED -> order.place();
             case PAID -> {
                 order.place();
                 order.markAsPaid();
@@ -60,9 +60,8 @@ public class OrderTestDataBuilder {
                 order.markAsPaid();
                 order.markAsReady();
             }
-            case CANCELED -> {
-                order.cancel();
-            }
+            case CANCELED -> order.cancel();
+            default -> throw new IllegalStateException("Unexpected value: " + this.status);
         }
 
         return order;
@@ -152,6 +151,11 @@ public class OrderTestDataBuilder {
 
     public OrderTestDataBuilder status(OrderStatus status) {
         this.status = status;
+        return this;
+    }
+
+    public OrderTestDataBuilder creditCardId(CreditCardId creditCardId) {
+        this.creditCardId = creditCardId;
         return this;
     }
 

@@ -22,7 +22,7 @@ class OrderFactoryTest {
         Quantity quantity = new Quantity(2);
         CustomerId customerId = new CustomerId();
 
-        Order order = OrderFactory.filled(customerId, shipping, billing, gateway, product, quantity);
+        Order order = OrderFactory.filled(customerId, shipping, billing, gateway, product, quantity, null);
 
         assertWith(order,
                 o -> assertThat(o.shipping()).isEqualTo(shipping),

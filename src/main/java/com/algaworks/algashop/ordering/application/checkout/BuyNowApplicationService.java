@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.application.checkout;
 
+import com.algaworks.algashop.ordering.domain.model.DomainException;
 import com.algaworks.algashop.ordering.domain.model.commons.Quantity;
 import com.algaworks.algashop.ordering.domain.model.commons.ZipCode;
 import com.algaworks.algashop.ordering.domain.model.customer.Customer;
@@ -45,6 +46,13 @@ public class BuyNowApplicationService {
 
         ProductId productId = new ProductId(input.getProductId());
         Product product = productCatalogService.ofId(productId).orElseThrow(() -> new ProductNotFoundException(productId));
+        CreditCardId creditCardId = null;
+
+        if (paymentMethod.equals(PaymentMethod.CREDIT_CARD)) {
+            if (input.getCreditCardId() == null) throw new DomainException("Credit card id is required");
+            creditCardId = new CreditCardId(input.getCreditCardId());
+        }
+
         Customer customer = customers.ofId(customerId).orElseThrow(() -> new CustomerNotFoundException(customerId));
 
         var shippingCalculationResult = calculateShippingCost(input.getShipping());
@@ -53,7 +61,7 @@ public class BuyNowApplicationService {
 
         Billing billing = billingInputDisassembler.toDomainModel(input.getBilling());
 
-        Order order = buyNowService.buyNow(product, customer, billing, shipping, quantity, paymentMethod);
+        Order order = buyNowService.buyNow(product, customer, billing, shipping, quantity, paymentMethod, creditCardId);
 
         orders.add(order);
 

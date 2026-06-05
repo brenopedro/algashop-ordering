@@ -15,14 +15,14 @@ public class CheckoutService {
     private final CustomerHaveFreeShippingSpecification customerHaveFreeShippingSpecification;
 
     public Order checkout(Customer customer, ShoppingCart shoppingCart, Billing billing,
-                          Shipping shipping, PaymentMethod paymentMethod) {
+                          Shipping shipping, PaymentMethod paymentMethod, CreditCardId creditCardId) {
 
         if(shoppingCart.isEmpty() || shoppingCart.containsUnavailableItems())
             throw new ShoppingCartCantProceedToCheckoutException();
 
         Order order = Order.draft(shoppingCart.customerId());
         order.changeBilling(billing);
-        order.changePaymentMethod(paymentMethod);
+        order.changePaymentMethod(paymentMethod, creditCardId);
 
         if(haveFreeShipping(customer)) {
             order.changeShipping(shipping.toBuilder().cost(Money.ZERO).build());

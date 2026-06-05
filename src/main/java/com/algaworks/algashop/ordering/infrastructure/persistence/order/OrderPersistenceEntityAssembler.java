@@ -42,6 +42,10 @@ public class OrderPersistenceEntityAssembler {
         orderPersistenceEntity.setShipping(toShippingEmbeddable(order.shipping()));
         orderPersistenceEntity.replaceItems(mergeItems(order, orderPersistenceEntity));
 
+        if (order.creditCardId() != null) {
+            orderPersistenceEntity.setCreditCardId(order.creditCardId().id());
+        }
+
         CustomerPersistenceEntity customerPersistenceEntity = customerRepository
                 .getReferenceById(order.customerId().value());
         orderPersistenceEntity.setCustomer(customerPersistenceEntity);
