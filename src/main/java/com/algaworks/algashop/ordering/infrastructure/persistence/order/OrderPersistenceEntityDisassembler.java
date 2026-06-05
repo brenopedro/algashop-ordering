@@ -65,6 +65,7 @@ public class OrderPersistenceEntityDisassembler {
                 .fullName(new FullName(billing.getFirstName(), billing.getLastName()))
                 .document(new Document(billing.getDocument()))
                 .phone(new Phone(billing.getPhone()))
+                .email(new Email(billing.getEmail()))
                 .address(toAddress(billing.getAddress()))
                 .build();
     }
