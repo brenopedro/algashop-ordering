@@ -1,0 +1,20 @@
+package com.algaworks.algashop.ordering.utils;
+
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.context.annotation.Bean;
+import org.testcontainers.postgresql.PostgreSQLContainer;
+
+@TestConfiguration
+public class TestContainerPostgreSQLConfig {
+
+    private static final PostgreSQLContainer postgreSQLContainer =
+            new PostgreSQLContainer("postgres:17-alpine");
+
+    @Bean
+    @ServiceConnection
+    public PostgreSQLContainer postgreSQLContainer() {
+        return postgreSQLContainer;
+    }
+
+}
