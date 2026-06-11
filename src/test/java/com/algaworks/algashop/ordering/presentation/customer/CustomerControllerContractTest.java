@@ -1,7 +1,7 @@
 package com.algaworks.algashop.ordering.presentation.customer;
 
 import com.algaworks.algashop.ordering.core.ports.in.customer.CustomerInput;
-import com.algaworks.algashop.ordering.core.application.customer.CustomerManagementService;
+import com.algaworks.algashop.ordering.core.application.customer.CustomerManagementApplicationService;
 import com.algaworks.algashop.ordering.core.application.customer.query.*;
 import com.algaworks.algashop.ordering.core.ports.in.customer.CustomerFilter;
 import com.algaworks.algashop.ordering.core.ports.in.customer.CustomerOutput;
@@ -40,7 +40,7 @@ class CustomerControllerContractTest {
     private WebApplicationContext context;
 
     @MockitoBean
-    private CustomerManagementService customerManagementService;
+    private CustomerManagementApplicationService customerManagementApplicationService;
 
     @MockitoBean
     private ForQueryingCustomers customerQueryService;
@@ -62,7 +62,7 @@ class CustomerControllerContractTest {
         CustomerOutput customerOutput = CustomerOutputTestDataBuilder.existing().build();
 
         UUID customerId = UUID.randomUUID();
-        Mockito.when(customerManagementService.create(any(CustomerInput.class)))
+        Mockito.when(customerManagementApplicationService.create(any(CustomerInput.class)))
                 .thenReturn(customerId);
         Mockito.when(customerQueryService.findById(any(UUID.class)))
                 .thenReturn(customerOutput);
@@ -279,7 +279,7 @@ class CustomerControllerContractTest {
 
     @Test
     void createCustomerError409Contract() {
-        Mockito.when(customerManagementService.create(any(CustomerInput.class)))
+        Mockito.when(customerManagementApplicationService.create(any(CustomerInput.class)))
                 .thenThrow(CustomerEmailIsInUseException.class);
 
         String jsonInput = """
@@ -322,7 +322,7 @@ class CustomerControllerContractTest {
     @Test
     void createCustomerError422Contract() {
 
-        Mockito.when(customerManagementService.create(any(CustomerInput.class)))
+        Mockito.when(customerManagementApplicationService.create(any(CustomerInput.class)))
                 .thenThrow(DomainException.class);
 
         String jsonInput = """
@@ -357,15 +357,15 @@ class CustomerControllerContractTest {
                 .statusCode(HttpStatus.UNPROCESSABLE_CONTENT.value())
                 .body(
                         "status", Matchers.is(HttpStatus.UNPROCESSABLE_CONTENT.value()),
-                        "type", Matchers.is("/errors/unprocessable-entity"),
-                        "title", Matchers.is("Unprocessable entity"),
+                        "type", Matchers.is("/errors/unprocessable-content"),
+                        "title", Matchers.is("Unprocessable content"),
                         "instance", Matchers.notNullValue());
     }
 
     @Test
     void createCustomerError500Contract() {
 
-        Mockito.when(customerManagementService.create(any(CustomerInput.class)))
+        Mockito.when(customerManagementApplicationService.create(any(CustomerInput.class)))
                 .thenThrow(RuntimeException.class);
 
         String jsonInput = """

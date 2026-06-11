@@ -1,7 +1,7 @@
 package com.algaworks.algashop.ordering.core.application.customer.loyaltypoints;
 
 import com.algaworks.algashop.ordering.core.application.AbstractApplicationIT;
-import com.algaworks.algashop.ordering.core.application.customer.CustomerLoyaltyPointsService;
+import com.algaworks.algashop.ordering.core.application.customer.CustomerLoyaltyPointsApplicationService;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Email;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Money;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Quantity;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 class CustomerLoyaltyPointsApplicationServiceIT extends AbstractApplicationIT {
 
     @Autowired
-    CustomerLoyaltyPointsService loyaltyPointsService;
+    CustomerLoyaltyPointsApplicationService loyaltyPointsService;
 
     @Autowired
     Customers customers;

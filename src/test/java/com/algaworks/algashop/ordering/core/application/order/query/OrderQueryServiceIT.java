@@ -9,7 +9,11 @@ import com.algaworks.algashop.ordering.core.domain.model.order.Order;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderStatus;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderTestDataBuilder;
 import com.algaworks.algashop.ordering.core.domain.model.order.Orders;
-import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderQueryServiceImpl;
+import com.algaworks.algashop.ordering.core.ports.in.order.OrderFilter;
+import com.algaworks.algashop.ordering.core.ports.out.order.OrderDetailOutput;
+import com.algaworks.algashop.ordering.core.ports.out.order.ForObtainingOrders;
+import com.algaworks.algashop.ordering.core.ports.out.order.OrderSummaryOutput;
+import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order.ForObtainingOrdersJpaRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class OrderQueryServiceIT extends AbstractApplicationIT {
 
     @Autowired
-    private OrderQueryService orderQueryService;
+    private ForObtainingOrders orderQueryService;
 
     @Autowired
     private Orders orders;
@@ -29,7 +33,7 @@ class OrderQueryServiceIT extends AbstractApplicationIT {
     private Customers customers;
 
     @Autowired
-    private OrderQueryServiceImpl orderQueryServiceImpl;
+    private ForObtainingOrdersJpaRepositoryImpl forObtainingOrdersJpaRepositoryImpl;
 
     @Test
     void shouldFindById() {
@@ -62,7 +66,7 @@ class OrderQueryServiceIT extends AbstractApplicationIT {
         orders.add(OrderTestDataBuilder.anOrder().status(OrderStatus.READY).customerId(customer.id()).build());
         orders.add(OrderTestDataBuilder.anOrder().status(OrderStatus.CANCELED).customerId(customer.id()).build());
 
-        Page<OrderSummaryOutput> page = orderQueryServiceImpl.filter(new OrderFilter(3, 0));
+        Page<OrderSummaryOutput> page = forObtainingOrdersJpaRepositoryImpl.filter(new OrderFilter(3, 0));
         assertThat(page.getTotalPages()).isEqualTo(2);
         assertThat(page.getTotalElements()).isEqualTo(5);
         assertThat(page.getNumberOfElements()).isEqualTo(3);
@@ -86,7 +90,7 @@ class OrderQueryServiceIT extends AbstractApplicationIT {
         OrderFilter filter = new OrderFilter();
         filter.setCustomerId(customer1.id().value());
 
-        Page<OrderSummaryOutput> page = orderQueryServiceImpl.filter(filter);
+        Page<OrderSummaryOutput> page = forObtainingOrdersJpaRepositoryImpl.filter(filter);
         assertThat(page.getTotalPages()).isEqualTo(1);
         assertThat(page.getTotalElements()).isEqualTo(2);
         assertThat(page.getNumberOfElements()).isEqualTo(2);
@@ -113,7 +117,7 @@ class OrderQueryServiceIT extends AbstractApplicationIT {
         filter.setStatus(OrderStatus.PLACED.toString().toLowerCase());
         filter.setTotalAmountFrom(order1.totalAmount().value());
 
-        Page<OrderSummaryOutput> page = orderQueryServiceImpl.filter(filter);
+        Page<OrderSummaryOutput> page = forObtainingOrdersJpaRepositoryImpl.filter(filter);
         assertThat(page.getTotalPages()).isEqualTo(1);
         assertThat(page.getTotalElements()).isEqualTo(1);
         assertThat(page.getNumberOfElements()).isEqualTo(1);
@@ -138,7 +142,7 @@ class OrderQueryServiceIT extends AbstractApplicationIT {
         OrderFilter filter = new OrderFilter();
         filter.setOrderId("ABC");
 
-        Page<OrderSummaryOutput> page = orderQueryServiceImpl.filter(filter);
+        Page<OrderSummaryOutput> page = forObtainingOrdersJpaRepositoryImpl.filter(filter);
         assertThat(page.getTotalPages()).isEqualTo(0);
         assertThat(page.getTotalElements()).isEqualTo(0);
         assertThat(page.getNumberOfElements()).isEqualTo(0);
@@ -163,7 +167,7 @@ class OrderQueryServiceIT extends AbstractApplicationIT {
         filter.setSortByProperty(OrderFilter.SortType.STATUS);
         filter.setSortDirection(Sort.Direction.ASC);
 
-        Page<OrderSummaryOutput> page = orderQueryServiceImpl.filter(filter);
+        Page<OrderSummaryOutput> page = forObtainingOrdersJpaRepositoryImpl.filter(filter);
         assertThat(page.getContent().getFirst().getStatus()).isEqualTo(OrderStatus.CANCELED.toString());
     }
 

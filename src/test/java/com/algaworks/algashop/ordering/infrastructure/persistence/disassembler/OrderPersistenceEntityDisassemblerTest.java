@@ -1,9 +1,9 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.disassembler;
 
 import com.algaworks.algashop.ordering.core.domain.model.order.Order;
-import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntity;
+import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order.OrderPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntityTestDataBuilder;
-import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityDisassembler;
+import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.order.OrderPersistenceEntityDisassembler;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

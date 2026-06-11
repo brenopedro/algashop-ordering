@@ -1,7 +1,7 @@
 package com.algaworks.algashop.ordering.infrastructure.listener.customer;
 
 
-import com.algaworks.algashop.ordering.core.application.customer.CustomerLoyaltyPointsService;
+import com.algaworks.algashop.ordering.core.application.customer.CustomerLoyaltyPointsApplicationService;
 import com.algaworks.algashop.ordering.core.ports.out.customer.ForNotifyingCustomers;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Email;
 import com.algaworks.algashop.ordering.core.domain.model.commons.FullName;
@@ -33,7 +33,7 @@ class CustomerEventListenerIT {
     private CustomerEventListener customerEventListener;
 
     @MockitoBean
-    private CustomerLoyaltyPointsService customerLoyaltyPointsService;
+    private CustomerLoyaltyPointsApplicationService customerLoyaltyPointsApplicationService;
 
     @MockitoBean
     private ForNotifyingCustomers forNotifyingCustomers;
@@ -44,7 +44,7 @@ class CustomerEventListenerIT {
                 new OrderId(), new CustomerId(), OffsetDateTime.now()));
 
         verify(customerEventListener).listen(any(OrderReadyEvent.class));
-        verify(customerLoyaltyPointsService).addLoyaltyPoints(any(UUID.class), any(String.class));
+        verify(customerLoyaltyPointsApplicationService).addLoyaltyPoints(any(UUID.class), any(String.class));
     }
 
     @Test
