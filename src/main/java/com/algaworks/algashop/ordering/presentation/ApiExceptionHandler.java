@@ -59,9 +59,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({DomainException.class, UnprocessableEntityException.class})
     public ProblemDetail handleUnprocessableEntityException(Exception ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_CONTENT);
-        problemDetail.setTitle("Unprocessable entity");
+        problemDetail.setTitle("Unprocessable content");
         problemDetail.setDetail(ex.getMessage());
-        problemDetail.setType(URI.create("/errors/unprocessable-entity"));
+        problemDetail.setType(URI.create("/errors/unprocessable-content"));
 
         return problemDetail;
     }

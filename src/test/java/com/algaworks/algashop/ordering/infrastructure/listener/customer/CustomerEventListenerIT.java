@@ -1,14 +1,15 @@
 package com.algaworks.algashop.ordering.infrastructure.listener.customer;
 
 
-import com.algaworks.algashop.ordering.core.application.customer.loyaltypoints.CustomerLoyaltyPointsApplicationService;
-import com.algaworks.algashop.ordering.core.application.customer.notification.CustomerNotificationApplicationService;
+import com.algaworks.algashop.ordering.core.application.customer.CustomerLoyaltyPointsService;
+import com.algaworks.algashop.ordering.core.ports.out.customer.ForNotifyingCustomers;
 import com.algaworks.algashop.ordering.core.domain.model.commons.Email;
 import com.algaworks.algashop.ordering.core.domain.model.commons.FullName;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerId;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerRegisteredEvent;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderId;
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderReadyEvent;
+import com.algaworks.algashop.ordering.infrastructure.adapters.in.listener.customer.CustomerEventListener;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,10 +33,10 @@ class CustomerEventListenerIT {
     private CustomerEventListener customerEventListener;
 
     @MockitoBean
-    private CustomerLoyaltyPointsApplicationService customerLoyaltyPointsApplicationService;
+    private CustomerLoyaltyPointsService customerLoyaltyPointsService;
 
     @MockitoBean
-    private CustomerNotificationApplicationService customerNotificationApplicationService;
+    private ForNotifyingCustomers forNotifyingCustomers;
 
     @Test
     void shouldListenOrderReadyEvent() {
@@ -43,7 +44,7 @@ class CustomerEventListenerIT {
                 new OrderId(), new CustomerId(), OffsetDateTime.now()));
 
         verify(customerEventListener).listen(any(OrderReadyEvent.class));
-        verify(customerLoyaltyPointsApplicationService).addLoyaltyPoints(any(UUID.class), any(String.class));
+        verify(customerLoyaltyPointsService).addLoyaltyPoints(any(UUID.class), any(String.class));
     }
 
     @Test
@@ -52,8 +53,8 @@ class CustomerEventListenerIT {
                 new CustomerId(), OffsetDateTime.now(), new FullName("John", "Doe"), new Email("john@gmail.com")));
 
         verify(customerEventListener).listen(any(CustomerRegisteredEvent.class));
-        verify(customerNotificationApplicationService).notifyNewRegistration(
-                any(CustomerNotificationApplicationService.NotifyNewRegistrationInput.class));
+        verify(forNotifyingCustomers).notifyNewRegistration(
+                any(ForNotifyingCustomers.NotifyNewRegistrationInput.class));
     }
 
 }
