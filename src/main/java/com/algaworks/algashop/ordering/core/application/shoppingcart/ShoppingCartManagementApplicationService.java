@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.core.application.shoppingcart.management;
+package com.algaworks.algashop.ordering.core.application.shoppingcart;
 
 import com.algaworks.algashop.ordering.core.domain.model.commons.Quantity;
 import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerId;
@@ -7,6 +7,8 @@ import com.algaworks.algashop.ordering.core.domain.model.product.ProductCatalogS
 import com.algaworks.algashop.ordering.core.domain.model.product.ProductId;
 import com.algaworks.algashop.ordering.core.domain.model.product.ProductNotFoundException;
 import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.*;
+import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ForManagingShoppingCarts;
+import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ShoppingCartItemInput;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +18,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ShoppingCartManagementApplicationService {
+public class ShoppingCartManagementApplicationService implements ForManagingShoppingCarts {
 
     private final ShoppingCarts  shoppingCarts;
 
@@ -80,4 +82,5 @@ public class ShoppingCartManagementApplicationService {
 
         shoppingCarts.remove(shoppingCart);
     }
+
 }

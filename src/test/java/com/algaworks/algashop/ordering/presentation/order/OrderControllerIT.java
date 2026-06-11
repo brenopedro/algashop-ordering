@@ -6,7 +6,7 @@ import com.algaworks.algashop.ordering.core.application.order.query.OrderDetailO
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.infrastructure.persistence.order.OrderPersistenceEntityRepository;
-import com.algaworks.algashop.ordering.infrastructure.persistence.shoppingcart.ShoppingCartPersistenceEntityRepository;
+import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.shoppingcart.ShoppingCartPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.presentation.AbstractPresentationIT;
 import com.algaworks.algashop.ordering.utils.AlgaShopResourceUtils;
 import io.restassured.RestAssured;
@@ -141,7 +141,7 @@ class OrderControllerIT extends AbstractPresentationIT {
                 .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-                .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
+                .statusCode(HttpStatus.UNPROCESSABLE_CONTENT.value());
 
     }
 
@@ -158,6 +158,6 @@ class OrderControllerIT extends AbstractPresentationIT {
                 .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
-                .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
+                .statusCode(HttpStatus.UNPROCESSABLE_CONTENT.value());
     }
 }
