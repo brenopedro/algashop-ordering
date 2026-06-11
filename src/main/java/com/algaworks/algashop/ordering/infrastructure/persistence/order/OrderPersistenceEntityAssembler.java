@@ -1,7 +1,7 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.order;
 
-import com.algaworks.algashop.ordering.domain.model.commons.Address;
-import com.algaworks.algashop.ordering.domain.model.order.*;
+import com.algaworks.algashop.ordering.core.domain.model.commons.Address;
+import com.algaworks.algashop.ordering.core.domain.model.order.*;
 import com.algaworks.algashop.ordering.infrastructure.persistence.commons.AddressEmbeddable;
 import com.algaworks.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.customer.CustomerPersistenceEntityRepository;

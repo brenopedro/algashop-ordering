@@ -4,9 +4,9 @@ import java.net.URI;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.algaworks.algashop.ordering.domain.model.DomainEntityNotFoundException;
-import com.algaworks.algashop.ordering.domain.model.DomainException;
-import com.algaworks.algashop.ordering.domain.model.customer.CustomerEmailIsInUseException;
+import com.algaworks.algashop.ordering.core.domain.model.DomainEntityNotFoundException;
+import com.algaworks.algashop.ordering.core.domain.model.DomainException;
+import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerEmailIsInUseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;

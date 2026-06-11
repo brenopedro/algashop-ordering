@@ -1,0 +1,69 @@
+package com.algaworks.algashop.ordering.core.application.checkout;
+
+import com.algaworks.algashop.ordering.core.domain.model.DomainException;
+import com.algaworks.algashop.ordering.core.domain.model.commons.ZipCode;
+import com.algaworks.algashop.ordering.core.domain.model.customer.Customer;
+import com.algaworks.algashop.ordering.core.domain.model.customer.CustomerNotFoundException;
+import com.algaworks.algashop.ordering.core.domain.model.customer.Customers;
+import com.algaworks.algashop.ordering.core.domain.model.order.*;
+import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCart;
+import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCartId;
+import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCartNotFoundException;
+import com.algaworks.algashop.ordering.core.domain.model.shoppingcart.ShoppingCarts;
+import com.algaworks.algashop.ordering.core.domain.model.order.shipping.OriginAddressService;
+import com.algaworks.algashop.ordering.core.domain.model.order.shipping.ShippingCostService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+
+@Service
+@RequiredArgsConstructor
+public class CheckoutApplicationService {
+
+    private final ShoppingCarts shoppingCarts;
+    private final Orders orders;
+    private final Customers customers;
+
+    private final ShippingCostService shippingCostService;
+    private final OriginAddressService  originAddressService;
+    private final CheckoutService checkoutService;
+
+    private final BillingInputDisassembler billingInputDisassembler;
+    private final ShippingInputDisassembler shippingInputDisassembler;
+
+
+    public String checkout(CheckoutInput input) {
+        Objects.requireNonNull(input);
+        PaymentMethod paymentMethod = PaymentMethod.valueOf(input.getPaymentMethod());
+        CreditCardId creditCardId = null;
+
+        if (paymentMethod.equals(PaymentMethod.CREDIT_CARD)) {
+            if (input.getCreditCardId() == null) throw new DomainException("Credit card id is required");
+            creditCardId = new CreditCardId(input.getCreditCardId());
+        }
+
+        ShoppingCart shoppingCart = shoppingCarts.ofId(new ShoppingCartId(input.getShoppingCartId()))
+                .orElseThrow(ShoppingCartNotFoundException::new);
+
+        Customer customer = customers.ofId(shoppingCart.customerId()).orElseThrow(CustomerNotFoundException::new);
+
+        ShippingCostService.CalculationResult calculationResult = calculateShippingCost(input.getShipping());
+
+        Order order = checkoutService.checkout(customer, shoppingCart,
+                billingInputDisassembler.toDomainModel(input.getBilling()),
+                shippingInputDisassembler.toDomainModel(input.getShipping(), calculationResult),
+                paymentMethod, creditCardId);
+        orders.add(order);
+        shoppingCarts.add(shoppingCart);
+
+        return order.id().value().toString();
+    }
+
+    private ShippingCostService.CalculationResult calculateShippingCost(ShippingInput input) {
+        ZipCode origin = originAddressService.originAddress().zipCode();
+        ZipCode destination = new ZipCode(input.getAddress().getZipCode());
+
+        return shippingCostService.calculate(new ShippingCostService.CalculationRequest(origin, destination));
+    }
+}
