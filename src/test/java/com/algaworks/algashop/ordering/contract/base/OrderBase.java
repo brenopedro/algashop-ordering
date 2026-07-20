@@ -7,8 +7,8 @@ import com.algaworks.algashop.ordering.core.application.order.OrderSummaryOutput
 import com.algaworks.algashop.ordering.core.domain.model.order.OrderNotFoundException;
 import com.algaworks.algashop.ordering.core.ports.in.checkout.BuyNowInput;
 import com.algaworks.algashop.ordering.core.ports.in.checkout.CheckoutInput;
+import com.algaworks.algashop.ordering.core.ports.in.order.ForQueryingOrders;
 import com.algaworks.algashop.ordering.core.ports.in.order.OrderFilter;
-import com.algaworks.algashop.ordering.core.ports.out.order.ForObtainingOrders;
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.order.OrderController;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,16 +32,17 @@ class OrderBase {
     private WebApplicationContext context;
 
     @MockitoBean
-    private ForObtainingOrders orderQueryService;
-
-    @MockitoBean
-    private CheckoutApplicationService checkoutApplicationService;
+    private ForQueryingOrders orderQueryService;
 
     @MockitoBean
     private BuyNowApplicationService buyNowApplicationService;
 
-    public static final String VALID_ORDER_ID = "01226N0640J7Q";
-    public static final String NOT_FOUND_ORDER_ID = "01226N0693HDH";
+    @MockitoBean
+    private CheckoutApplicationService checkoutApplicationService;
+
+    public static final String validOrderId = "01226N0640J7Q";
+
+    public static final String notFoundOrderId = "01226N0693HDH";
 
     @BeforeEach
     void setUp() {
@@ -50,39 +51,25 @@ class OrderBase {
                         .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
                         .build()
         );
+
         RestAssuredMockMvc.enableLoggingOfRequestAndResponseIfValidationFails();
 
-        mockValidOrderId();
-        mockInvalidOrderId();
-        mockFilter();
-        mockBuyNow();
-        mockCheckout();
-    }
-
-    private void mockValidOrderId() {
-        when(orderQueryService.findById(VALID_ORDER_ID))
-                .thenReturn(OrderDetailOutputTestDataBuilder.placedOrder(VALID_ORDER_ID).build());
-    }
-
-    private void mockInvalidOrderId() {
-        when(orderQueryService.findById(NOT_FOUND_ORDER_ID))
-                .thenThrow(new OrderNotFoundException());
-    }
-
-    private void mockFilter() {
-        when(orderQueryService.filter(any(OrderFilter.class)))
-                .thenReturn(new PageImpl<>(List.of(OrderSummaryOutputTestDataBuilder
-                        .placedOrder().id(VALID_ORDER_ID).build())));
-    }
-
-    private void mockBuyNow() {
         when(buyNowApplicationService.buyNow(any(BuyNowInput.class)))
-                .thenReturn(VALID_ORDER_ID);
-    }
+                .thenReturn(validOrderId);
 
-    private void mockCheckout() {
         when(checkoutApplicationService.checkout(any(CheckoutInput.class)))
-                .thenReturn(VALID_ORDER_ID);
+                .thenReturn(validOrderId);
+
+        when(orderQueryService.findById(validOrderId))
+                .thenReturn(OrderDetailOutputTestDataBuilder.placedOrder(validOrderId).build());
+
+        when(orderQueryService.findById(notFoundOrderId))
+                .thenThrow(new OrderNotFoundException());
+
+        when(orderQueryService.filter(any(OrderFilter.class)))
+                .thenReturn(new PageImpl<>(
+                        List.of(OrderSummaryOutputTestDataBuilder.placedOrder().id(validOrderId).build())
+                ));
     }
 }
 

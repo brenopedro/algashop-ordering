@@ -39,10 +39,12 @@ public class AbstractPresentationIT {
 
     protected static void initWireMock() {
         wireMockRapidex = new WireMockServer(options()
+                .templatingEnabled(true)
                 .port(8780)
                 .usingFilesUnderDirectory("src/test/resources/wiremock/rapidex"));
 
         wireMockProductCatalog = new WireMockServer(options()
+                .templatingEnabled(true)
                 .port(8781)
                 .usingFilesUnderDirectory("src/test/resources/wiremock/product-catalog"));
 
