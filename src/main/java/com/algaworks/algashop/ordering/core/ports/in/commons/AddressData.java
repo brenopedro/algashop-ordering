@@ -1,6 +1,7 @@
 package com.algaworks.algashop.ordering.core.ports.in.commons;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +30,7 @@ public class AddressData {
     @NotBlank
     private String state;
 
+    @Size(max = 5, min = 5)
     @NotBlank
     private String zipCode;
 }
