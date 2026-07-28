@@ -5,17 +5,10 @@ import com.algaworks.algashop.ordering.core.domain.model.product.Product;
 import com.algaworks.algashop.ordering.core.domain.model.product.ProductCatalogService;
 import com.algaworks.algashop.ordering.core.domain.model.product.ProductId;
 import com.algaworks.algashop.ordering.core.domain.model.product.ProductName;
-import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.excpetionhandler.BadGatewayException;
-import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.excpetionhandler.GatewayTimeoutException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestClientException;
 
-import java.net.SocketTimeoutException;
 import java.util.Optional;
 
 @Slf4j
@@ -23,37 +16,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductCatalogServiceHttpImpl implements ProductCatalogService {
 
-    private final ProductCatalogAPIClient productCatalogAPIClient;
+    private final ResilientProductCatalogAPIClient productCatalogAPIClient;
 
-    @Retryable(
-            maxRetries = 3,
-            delayString = "3s",
-            multiplier = 2,
-            includes = {GatewayTimeoutException.class, BadGatewayException.class}
-    )
     @Override
     public Optional<Product> ofId(ProductId productId) {
-        ProductResponse productResponse;
-        log.info("Loading product {}", productId);
-        try {
-            productResponse  = productCatalogAPIClient.getById(productId.value());
-        } catch (ResourceAccessException ex) {
-            throw new GatewayTimeoutException("Product Catalog API Gateway Timeout", ex);
-        } catch (HttpClientErrorException.NotFound ex) {
-            return Optional.empty();
-        } catch (RestClientException ex) {
-            if (ex.getCause() instanceof SocketTimeoutException)
-                throw new GatewayTimeoutException("Product Catalog API Gateway Timeout", ex);
-            throw new BadGatewayException("Product Catalog API Bad Gateway", ex);
-        }
-
-        return Optional.of(
+        return productCatalogAPIClient.getById(productId.value()).map(productResponse ->
                 Product.builder()
                         .id(new ProductId(productResponse.getId()))
                         .name(new ProductName(productResponse.getName()))
                         .inStock(productResponse.getInStock())
                         .price(new Money(productResponse.getSalePrice()))
-                        .build()
-        );
+                        .build());
     }
 }
