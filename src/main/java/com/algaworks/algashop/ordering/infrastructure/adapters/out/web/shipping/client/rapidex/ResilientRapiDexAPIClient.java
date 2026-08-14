@@ -1,9 +1,8 @@
-package com.algaworks.algashop.ordering.infrastructure.adapters.out.web.product.client.http;
+package com.algaworks.algashop.ordering.infrastructure.adapters.out.web.shipping.client.rapidex;
 
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.excpetionhandler.BadGatewayException;
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.excpetionhandler.GatewayTimeoutException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.circuitbreaker.retry.FrameworkRetryCircuitBreaker;
 import org.springframework.cloud.circuitbreaker.retry.FrameworkRetryConfig;
 import org.springframework.cloud.circuitbreaker.retry.FrameworkRetryConfigBuilder;
@@ -18,31 +17,30 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 
 import java.net.SocketTimeoutException;
-import java.util.Optional;
-import java.util.UUID;
 
 @Component
 @Slf4j
-public class ResilientProductCatalogAPIClient {
+public class ResilientRapiDexAPIClient {
 
-    private final ProductCatalogAPIClient productCatalogAPIClient;
+    private final RapiDexAPIClient rapiDexAPIClient;
     private final FrameworkRetryCircuitBreaker circuitBreaker;
 
-    public ResilientProductCatalogAPIClient(CircuitBreakerFactory<FrameworkRetryConfig,
-                                                    FrameworkRetryConfigBuilder> circuitBreakerFactory,
-                                            ProductCatalogAPIClient productCatalogAPIClient) {
-        this.productCatalogAPIClient = productCatalogAPIClient;
-        this.circuitBreaker = (FrameworkRetryCircuitBreaker) circuitBreakerFactory.create("productCatalogCB");
+    public ResilientRapiDexAPIClient(CircuitBreakerFactory<FrameworkRetryConfig,
+                                             FrameworkRetryConfigBuilder> circuitBreakerFactory,
+                                     RapiDexAPIClient rapiDexAPIClient) {
+        this.rapiDexAPIClient = rapiDexAPIClient;
+        this.circuitBreaker = (FrameworkRetryCircuitBreaker) circuitBreakerFactory.create("rapidexAPICB");
     }
 
-    @Cacheable(cacheNames = "algashop:product-catalog-api:v1", key = "#productId")
-    @ConcurrencyLimit(10)
-    public Optional<ProductResponse> getById(UUID productId) {
-        log.info("Trying to load product {}", productId);
-        log.info("Product catalog API CB state is {}", circuitBreaker.getCircuitBreakerPolicy().getState());
-
+    @ConcurrencyLimit(15)
+    public DeliveryCostResponse calculate(DeliveryCostRequest request) {
+        log.info("RapidexAPI CircuitBreaker state is {}", circuitBreaker.getCircuitBreakerPolicy().getState());
         try {
-            return circuitBreaker.run(()->loadProduct(productId));
+            DeliveryCostResponse response = circuitBreaker.run(() -> doCalculate(request));
+            if (response == null) {
+                throw new BadGatewayException.ClientErrorException("Invalid zip code provided");
+            }
+            return response;
         } catch (NoFallbackAvailableException e) {
             throw unwrapException(e);
         }
@@ -60,15 +58,15 @@ public class ResilientProductCatalogAPIClient {
         return e;
     }
 
-    private Optional<ProductResponse> loadProduct(UUID productId) {
-        log.info("Loading product {}", productId);
+    private DeliveryCostResponse doCalculate(DeliveryCostRequest request) {
         try {
-            return Optional.ofNullable(productCatalogAPIClient.getById(productId));
-        } catch (HttpClientErrorException e) {
+            return rapiDexAPIClient.calculate(request);
+        }
+        catch (HttpClientErrorException e) {
             if (!(e instanceof HttpClientErrorException.NotFound)) {
-                log.error("Client HTTP error when loading product {}", productId, e);
+                log.warn("Client Error when loading delivery cost {}", request, e);
             }
-            return Optional.empty();
+            return null;
         } catch (RestClientException e) {
             throw translateException(e);
         }
@@ -77,18 +75,18 @@ public class ResilientProductCatalogAPIClient {
     private RuntimeException translateException(RestClientException e) {
         if (e.getCause() instanceof SocketTimeoutException
                 || e instanceof ResourceAccessException) {
-            return new GatewayTimeoutException("Product Catalog API Timeout", e);
+            return new GatewayTimeoutException("Rapidex API Timeout", e);
         }
 
         if (e instanceof HttpClientErrorException) {
-            return new BadGatewayException.ClientErrorException("Product Catalog API Bad Gateway", e);
+            return new BadGatewayException.ClientErrorException("Rapidex API Bad Gateway", e);
         }
 
         if (e instanceof HttpServerErrorException) {
-            return new BadGatewayException.ServerErrorException("Product Catalog API Bad Gateway", e);
+            return new BadGatewayException.ServerErrorException("Rapidex API Bad Gateway", e);
         }
 
-        return new BadGatewayException("Product Catalog API Bad Gateway", e);
+        return new BadGatewayException("Rapidex API Bad Gateway", e);
     }
 
 }
