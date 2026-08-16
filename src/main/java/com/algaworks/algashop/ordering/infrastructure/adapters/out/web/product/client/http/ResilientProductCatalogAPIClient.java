@@ -21,6 +21,8 @@ import java.net.SocketTimeoutException;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.algaworks.algashop.ordering.infrastructure.config.resilince.SpringCircuitBreakerConfig.PRODUCT_CATALOG_CB_ID;
+
 @Component
 @Slf4j
 public class ResilientProductCatalogAPIClient {
@@ -32,7 +34,7 @@ public class ResilientProductCatalogAPIClient {
                                                     FrameworkRetryConfigBuilder> circuitBreakerFactory,
                                             ProductCatalogAPIClient productCatalogAPIClient) {
         this.productCatalogAPIClient = productCatalogAPIClient;
-        this.circuitBreaker = (FrameworkRetryCircuitBreaker) circuitBreakerFactory.create("productCatalogCB");
+        this.circuitBreaker = (FrameworkRetryCircuitBreaker) circuitBreakerFactory.create(PRODUCT_CATALOG_CB_ID);
     }
 
     @Cacheable(cacheNames = "algashop:product-catalog-api:v1", key = "#productId")
