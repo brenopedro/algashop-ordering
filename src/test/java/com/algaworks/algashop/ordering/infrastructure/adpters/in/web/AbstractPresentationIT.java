@@ -11,7 +11,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
-import static com.algaworks.algashop.ordering.utils.MockJwtDecoderFactory.DEFAULT_TOKEN_VALUE;
+import static com.algaworks.algashop.ordering.utils.MockJwtDecoderFactory.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static io.restassured.config.JsonConfig.jsonConfig;
 
@@ -35,9 +35,22 @@ public class AbstractPresentationIT {
     }
 
     protected RequestSpecification givenAuthenticated() {
-        return RestAssured.given()
-                .header("Authorization", "Bearer " + DEFAULT_TOKEN_VALUE);
+        return givenAuthenticated(DEFAULT_TOKEN_VALUE);
     }
+
+    protected RequestSpecification givenAuthenticatedWithExpiredToken() {
+        return givenAuthenticated(EXPIRED_TOKEN_VALUE);
+    }
+
+    protected RequestSpecification givenAuthenticatedWithNoScopeToken() {
+        return givenAuthenticated(NO_SCOPE_TOKEN_VALUE);
+    }
+
+    protected RequestSpecification givenAuthenticated(String tokenValue) {
+        return RestAssured.given()
+                .header("Authorization", "Bearer " + tokenValue);
+    }
+
 
     protected static void initWireMock() {
         wireMockRapidex = new WireMockServer(options()

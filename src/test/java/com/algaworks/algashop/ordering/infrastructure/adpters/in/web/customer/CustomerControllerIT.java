@@ -71,4 +71,37 @@ class CustomerControllerIT extends AbstractPresentationIT {
         Assertions.assertThat(customerRepository.existsById(validCustomerId)).isTrue();
         Assertions.assertThat(customerRepository.findById(validCustomerId).orElseThrow().getArchived()).isTrue();
     }
+
+    @Test
+    void shouldReturnForbiddenWhenCreatingCustomerWithoutWriteScope() {
+        String json = AlgaShopResourceUtils.readContent("json/create-customer.json");
+
+        givenAuthenticatedWithNoScopeToken()
+                    .accept(MediaType.APPLICATION_JSON_VALUE)
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .body(json)
+                .when()
+                    .post("/api/v1/customers")
+                .then()
+                    .assertThat()
+                    .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+                    .statusCode(HttpStatus.FORBIDDEN.value());
+
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenCreatingCustomerWithExpiredToken() {
+        String json = AlgaShopResourceUtils.readContent("json/create-customer.json");
+
+        givenAuthenticatedWithExpiredToken()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(json)
+                .when()
+                .post("/api/v1/customers")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.UNAUTHORIZED.value());
+
+    }
 }
