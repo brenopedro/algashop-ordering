@@ -1,31 +1,28 @@
 package com.algaworks.algashop.ordering.infrastructure.adpters.in.web;
 
+import com.algaworks.algashop.ordering.utils.MockJwtDecoderConfig;
 import com.algaworks.algashop.ordering.utils.TestContainerPostgreSQLConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.restassured.RestAssured;
 import io.restassured.path.json.config.JsonPathConfig;
+import io.restassured.specification.RequestSpecification;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
+import static com.algaworks.algashop.ordering.utils.MockJwtDecoderFactory.DEFAULT_TOKEN_VALUE;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static io.restassured.config.JsonConfig.jsonConfig;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = "classpath:db/testdata/afterMigrate.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(scripts = "classpath:db/clean/afterMigrate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
-@Import(TestContainerPostgreSQLConfig.class)
+@Import({TestContainerPostgreSQLConfig.class, MockJwtDecoderConfig.class})
 public class AbstractPresentationIT {
 
     @LocalServerPort
     protected int port;
-
-//    @Container
-//    @ServiceConnection
-//    protected static final PostgreSQLContainer postgreSQLContainer =
-//            new PostgreSQLContainer("postgres:17-alpine")
-//                    .withDatabaseName("ordering_test");
 
     protected static WireMockServer wireMockProductCatalog;
     protected static WireMockServer wireMockRapidex;
@@ -35,6 +32,11 @@ public class AbstractPresentationIT {
         RestAssured.port = port;
 
         RestAssured.config().jsonConfig(jsonConfig().numberReturnType(JsonPathConfig.NumberReturnType.BIG_DECIMAL));
+    }
+
+    protected RequestSpecification givenAuthenticated() {
+        return RestAssured.given()
+                .header("Authorization", "Bearer " + DEFAULT_TOKEN_VALUE);
     }
 
     protected static void initWireMock() {

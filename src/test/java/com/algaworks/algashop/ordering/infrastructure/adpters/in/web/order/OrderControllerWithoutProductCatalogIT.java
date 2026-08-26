@@ -2,7 +2,6 @@ package com.algaworks.algashop.ordering.infrastructure.adpters.in.web.order;
 
 import com.algaworks.algashop.ordering.infrastructure.adpters.in.web.AbstractPresentationIT;
 import com.algaworks.algashop.ordering.utils.AlgaShopResourceUtils;
-import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,8 +32,7 @@ class OrderControllerWithoutProductCatalogIT extends AbstractPresentationIT {
 
         wireMockProductCatalog.stop();
 
-        RestAssured
-                .given()
+        givenAuthenticated()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType("application/vnd.order-with-product.v1+json")
                 .body(json)

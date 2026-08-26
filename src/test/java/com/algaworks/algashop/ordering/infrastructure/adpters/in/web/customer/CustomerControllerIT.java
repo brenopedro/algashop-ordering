@@ -3,7 +3,6 @@ package com.algaworks.algashop.ordering.infrastructure.adpters.in.web.customer;
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.customer.CustomerPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.infrastructure.adpters.in.web.AbstractPresentationIT;
 import com.algaworks.algashop.ordering.utils.AlgaShopResourceUtils;
-import io.restassured.RestAssured;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
@@ -42,8 +41,7 @@ class CustomerControllerIT extends AbstractPresentationIT {
     void shouldCreateCustomer() {
         String json = AlgaShopResourceUtils.readContent("json/create-customer.json");
 
-        UUID createdCustomerId = RestAssured
-                .given()
+        UUID createdCustomerId = givenAuthenticated()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(json)
@@ -62,8 +60,7 @@ class CustomerControllerIT extends AbstractPresentationIT {
 
     @Test
     void shouldArchiveCustomer() {
-        RestAssured
-                .given()
+        givenAuthenticated()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .delete("/api/v1/customers/{customerId}", validCustomerId)

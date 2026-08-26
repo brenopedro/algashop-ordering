@@ -4,7 +4,6 @@ import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.c
 import com.algaworks.algashop.ordering.infrastructure.adapters.out.persistence.shoppingcart.ShoppingCartPersistenceEntityRepository;
 import com.algaworks.algashop.ordering.infrastructure.adpters.in.web.AbstractPresentationIT;
 import com.algaworks.algashop.ordering.utils.AlgaShopResourceUtils;
-import io.restassured.RestAssured;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
@@ -25,9 +24,6 @@ class ShoppingCartControllerIT extends AbstractPresentationIT {
     @Autowired
     private ShoppingCartPersistenceEntityRepository shoppingCartRepository;
 
-    private static final UUID validCustomerId = UUID.fromString("6e148bd5-47f6-4022-b9da-07cfaa294f7a");
-    private static final UUID validShoppingCartId = UUID.fromString("4f31582a-66e6-4601-a9d3-ff608c2d4461");
-
     @BeforeAll
     static void beforeAll() {
         AbstractPresentationIT.initWireMock();
@@ -47,7 +43,7 @@ class ShoppingCartControllerIT extends AbstractPresentationIT {
     void shouldCreateShoppingCart() {
         String json = AlgaShopResourceUtils.readContent("json/create-shopping-cart.json");
 
-        UUID createdShoppingCart = RestAssured
+        UUID createdShoppingCart = givenAuthenticated()
                 .given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
