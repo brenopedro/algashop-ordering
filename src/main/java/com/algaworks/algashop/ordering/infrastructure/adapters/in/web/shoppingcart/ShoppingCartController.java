@@ -7,6 +7,7 @@ import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ForQueryingSho
 import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ShoppingCartItemInput;
 import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ShoppingCartOutput;
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.excpetionhandler.UnprocessableEntityException;
+import com.algaworks.algashop.ordering.infrastructure.config.security.SecurityAnnotations;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,17 +24,20 @@ public class ShoppingCartController {
     private final ForManagingShoppingCarts forManagingShoppingCarts;
 
     @GetMapping("/{shoppingCartId}")
+    @SecurityAnnotations.CanReadShoppingCarts
     public ShoppingCartOutput getById(@PathVariable UUID shoppingCartId) {
         return queryService.findById(shoppingCartId);
     }
 
     @GetMapping("/{shoppingCartId}/items")
+    @SecurityAnnotations.CanReadShoppingCarts
     public ShoppingCartItemListModel getItems(@PathVariable UUID shoppingCartId) {
         return new ShoppingCartItemListModel(queryService.findById(shoppingCartId).getItems());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @SecurityAnnotations.CanWriteShoppingCarts
     public ShoppingCartOutput create(@RequestBody @Valid ShoppingCartInput input) {
         UUID id;
         try {
@@ -46,6 +50,7 @@ public class ShoppingCartController {
 
     @PostMapping("/{shoppingCartId}/items")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @SecurityAnnotations.CanWriteShoppingCarts
     public void addItem(@RequestBody @Valid ShoppingCartItemInput input, @PathVariable UUID shoppingCartId) {
         input.setShoppingCartId(shoppingCartId);
         try {
@@ -57,18 +62,21 @@ public class ShoppingCartController {
 
     @DeleteMapping("/{shoppingCartId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @SecurityAnnotations.CanWriteShoppingCarts
     public void delete(@PathVariable UUID shoppingCartId) {
         forManagingShoppingCarts.delete(shoppingCartId);
     }
 
     @DeleteMapping("/{shoppingCartId}/items")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @SecurityAnnotations.CanWriteShoppingCarts
     public void empty(@PathVariable UUID shoppingCartId) {
         forManagingShoppingCarts.empty(shoppingCartId);
     }
 
     @DeleteMapping("/{shoppingCartId}/items/{itemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @SecurityAnnotations.CanWriteShoppingCarts
     public void removeItem(@PathVariable UUID shoppingCartId, @PathVariable UUID itemId) {
         forManagingShoppingCarts.removeItem(shoppingCartId, itemId);
     }

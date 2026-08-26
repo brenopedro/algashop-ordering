@@ -4,6 +4,7 @@ import com.algaworks.algashop.ordering.core.ports.in.customer.*;
 import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ForQueryingShoppingCarts;
 import com.algaworks.algashop.ordering.core.ports.in.shoppingcart.ShoppingCartOutput;
 import com.algaworks.algashop.ordering.infrastructure.adapters.in.web.PageModel;
+import com.algaworks.algashop.ordering.infrastructure.config.security.SecurityAnnotations;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @SecurityAnnotations.CanWriteCustomers
     public CustomerOutput createCustomer(@RequestBody @Valid CustomerInput input, HttpServletResponse httpServletResponse) {
         UUID customerId = forManagingCustomers.create(input);
 
@@ -37,21 +39,25 @@ public class CustomerController {
     }
 
     @GetMapping
+    @SecurityAnnotations.CanReadCustomers
     public PageModel<CustomerSummaryOutput> findAll(CustomerFilter customerFilter) {
         return PageModel.of(forQueryingCustomers.filter(customerFilter));
     }
 
     @GetMapping("/{customerId}")
+    @SecurityAnnotations.CanReadCustomers
     public CustomerOutput findById(@PathVariable UUID customerId) {
         return forQueryingCustomers.findById(customerId);
     }
 
     @GetMapping("/{customerId}/shopping-cart")
+    @SecurityAnnotations.CanReadCustomers
     public ShoppingCartOutput findShoppingCartByCustomerId(@PathVariable UUID customerId) {
         return forQueryingShoppingCarts.findByCustomerId(customerId);
     }
 
     @PutMapping("{customerId}")
+    @SecurityAnnotations.CanWriteCustomers
     public CustomerOutput updateCustomer(@PathVariable UUID customerId, @RequestBody @Valid CustomerUpdateInput input) {
         forManagingCustomers.update(customerId, input);
         return forQueryingCustomers.findById(customerId);
@@ -59,6 +65,7 @@ public class CustomerController {
 
     @DeleteMapping("{customerId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @SecurityAnnotations.CanWriteCustomers
     public void deleteCustomer(@PathVariable UUID customerId) {
         forManagingCustomers.archive(customerId);
     }
