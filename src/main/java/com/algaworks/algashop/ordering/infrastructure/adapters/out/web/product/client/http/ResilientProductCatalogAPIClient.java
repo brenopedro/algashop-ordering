@@ -67,9 +67,6 @@ public class ResilientProductCatalogAPIClient {
         try {
             return Optional.ofNullable(productCatalogAPIClient.getById(productId));
         } catch (HttpClientErrorException e) {
-            if (!(e instanceof HttpClientErrorException.NotFound)) {
-                log.error("Client HTTP error when loading product {}", productId, e);
-            }
             return Optional.empty();
         } catch (RestClientException e) {
             throw translateException(e);
